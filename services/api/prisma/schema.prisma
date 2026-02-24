@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  telegramId      String   @unique
+  username        String?
+  reputationScore Float    @default(5.0)
+  totalTrades     Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  orders Order[]
+}
+
+model Order {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  type            String   // BUY or SELL
+  pair            String   @default("USDT/RUB")
+  rate            Float
+  minLimit        Float
+  maxLimit        Float
+  availableAmount Float
+  paymentMethods  String[]
+  status          String   @default("ACTIVE") // ACTIVE, HIDDEN, COMPLETED
+  createdAt       DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}

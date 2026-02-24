@@ -1,0 +1,28 @@
+{
+  "name": "p2pspb-mvp",
+  "version": "1.0.0",
+  "description": "Закрытый P2P-обмен криптовалют в Санкт-Петербурге",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd services/api && npm run dev",
+    "dev:web": "cd apps/web && npm run dev",
+    "build": "npm run build:api && npm run build:web",
+    "build:api": "cd services/api && npm run build",
+    "build:web": "cd apps/web && npm run build",
+    "install:all": "npm install && cd services/api && npm install && cd ../../apps/web && npm install"
+  },
+  "keywords": [
+    "p2p",
+    "crypto",
+    "exchange",
+    "spb",
+    "nextjs",
+    "nestjs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

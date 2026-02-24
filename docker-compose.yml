@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: p2pspb-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-p2pspb}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-p2pspb_password}
+      POSTGRES_DB: ${POSTGRES_DB:-p2pspb}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-p2pspb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile
+    container_name: p2pspb-api
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-p2pspb}:${POSTGRES_PASSWORD:-p2pspb_password}@postgres:5432/${POSTGRES_DB:-p2pspb}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET}
+      ADMIN_SESSION_TOKEN: ${ADMIN_SESSION_TOKEN}
+    ports:
+      - "${API_PORT:-4000}:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "npx prisma migrate deploy && npm run start"
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: p2pspb-web
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api}
+      NEXT_PUBLIC_ADMIN_SESSION_TOKEN: ${ADMIN_SESSION_TOKEN}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
