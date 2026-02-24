@@ -18,6 +18,19 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: p2pspb-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   api:
     build:
       context: ./services/api
@@ -30,10 +43,14 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET}
       ADMIN_SESSION_TOKEN: ${ADMIN_SESSION_TOKEN}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "${API_PORT:-4000}:4000"
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     command: sh -c "npx prisma migrate deploy && npm run start"
 
@@ -52,3 +69,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: p2pspb-config
+  namespace: p2pspb
+data:
+  NODE_ENV: "production"
+  PORT: "4000"
+  FRONTEND_URL: "https://p2pspb.com"
+  POSTGRES_USER: "p2pspb"
+  POSTGRES_DB: "p2pspb"
+  POSTGRES_PORT: "5432"
+  API_PORT: "4000"
+  WEB_PORT: "3000"
+  TELEGRAM_WEBHOOK_SECRET: "change-me-in-production"
+  ADMIN_SESSION_TOKEN: "change-me-in-production"

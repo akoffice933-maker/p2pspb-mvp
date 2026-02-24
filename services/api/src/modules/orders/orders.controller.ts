@@ -14,12 +14,25 @@ import { OrdersService } from './orders.service';
 import { Throttle } from '@nestjs/throttler';
 import { AdminGuard } from '../../common/guards/admin.guard';
 import { Request } from 'express';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiBearerAuth,
+  ApiHeader,
+} from '@nestjs/swagger';
 
+@ApiTags('orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Получить список активных заявок' })
+  @ApiQuery({ name: 'type', required: false, enum: ['BUY', 'SELL'] })
+  @ApiQuery({ name: 'payment', required: false, description: 'Способ оплаты (sbp, cash)' })
+  @ApiResponse({ status: 200, description: 'Список заявок' })
   @Throttle({ default: { limit: 30, ttl: 60000 } })
   async getOrders(
     @Query('type') type?: string,
@@ -29,14 +42,21 @@ export class OrdersController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Получить детали заказа по ID' })
+  @ApiResponse({ status: 200, description: 'Детали заказа' })
+  @ApiResponse({ status: 404, description: 'Заказ не найден' })
   async getOrder(@Param('id') id: string) {
     return this.ordersService.getOrderById(id);
   }
 
   @Post('create')
+  @ApiOperation({ summary: 'Создать новую заявку' })
+  @ApiHeader({ name: 'x-fingerprint', required: false, description: 'Отпечаток устройства' })
+  @ApiResponse({ status: 201, description: 'Заявка создана' })
+  @ApiResponse({ status: 400, description: 'Неверные данные' })
+  @ApiResponse({ status: 403, description: 'Отклонено анти-фрод системой' })
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   async createOrder(@Req() req: Request, @Body() body: any, @Headers('x-fingerprint') fingerprint?: string) {
-    // Валидация входных данных
     const {
       telegram_id,
       username,
@@ -54,7 +74,6 @@ export class OrdersController {
       );
     }
 
-    // Получаем IP адрес
     const ipAddress = req.ip || req.socket.remoteAddress;
 
     return this.ordersService.createOrder({
@@ -70,6 +89,8 @@ export class OrdersController {
   }
 
   @Post(':id/accept')
+  @ApiOperation({ summary: 'Принять заявку (покупатель)' })
+  @ApiResponse({ status: 200, description: 'Заявка принята' })
   async acceptOrder(
     @Param('id') id: string,
     @Body() body: { buyer_id: string; amount: number },
@@ -82,6 +103,8 @@ export class OrdersController {
   }
 
   @Post(':id/confirm-payment')
+  @ApiOperation({ summary: 'Подтвердить оплату (продавец)' })
+  @ApiResponse({ status: 200, description: 'Оплата подтверждена' })
   async confirmPayment(
     @Param('id') id: string,
     @Body() body: { user_id: string },
@@ -90,6 +113,8 @@ export class OrdersController {
   }
 
   @Post(':id/confirm-receipt')
+  @ApiOperation({ summary: 'Подтвердить получение (покупатель)' })
+  @ApiResponse({ status: 200, description: 'Получение подтверждено' })
   async confirmReceipt(
     @Param('id') id: string,
     @Body() body: { user_id: string },
@@ -98,6 +123,8 @@ export class OrdersController {
   }
 
   @Post(':id/cancel')
+  @ApiOperation({ summary: 'Отменить заявку' })
+  @ApiResponse({ status: 200, description: 'Заявка отменена' })
   async cancelOrder(
     @Param('id') id: string,
     @Body() body: { user_id: string },
@@ -106,6 +133,8 @@ export class OrdersController {
   }
 
   @Post(':id/dispute')
+  @ApiOperation({ summary: 'Создать спор' })
+  @ApiResponse({ status: 200, description: 'Спор создан' })
   async createDispute(
     @Param('id') id: string,
     @Body() body: { user_id: string; reason: string; description?: string },
@@ -120,6 +149,10 @@ export class OrdersController {
 
   @Post(':id/hide')
   @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Скрыть заявку (админ)' })
+  @ApiResponse({ status: 200, description: 'Заявка скрыта' })
+  @ApiResponse({ status: 401, description: 'Не авторизован' })
   async hideOrder(@Param('id') id: string) {
     return this.ordersService.hideOrder(id);
   }

@@ -81,8 +81,10 @@ npm run dev
 - **NestJS** - Node.js фреймворк
 - **Prisma 5** - ORM для работы с БД
 - **PostgreSQL** - база данных
+- **Redis** - rate limiting и кэширование
 - **bcryptjs** - хеширование паролей
 - **Helmet** - безопасность HTTP заголовков
+- **Socket.IO** - WebSocket для real-time
 
 ### Фронтенд
 - **Next.js 14** - React фреймворк
@@ -90,6 +92,14 @@ npm run dev
 - **TailwindCSS** - стилизация
 - **React Query** - управление состоянием сервера
 - **Lucide React** - иконки
+- **Socket.IO Client** - WebSocket клиент
+
+### Инфраструктура
+- **Docker & Docker Compose** - контейнеризация
+- **Kubernetes** - оркестрация
+- **Prometheus** - мониторинг и метрики
+- **Grafana** - визуализация метрик
+- **Swagger/OpenAPI** - документация API
 
 ## 📁 Структура БД
 

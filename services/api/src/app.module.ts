@@ -9,18 +9,32 @@ import { PrismaModule } from './prisma/prisma.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { WsModule } from './modules/ws/ws.module';
 import { FraudModule } from './modules/fraud/fraud.module';
+import { HealthModule } from './modules/health/health.module';
+import { RedisModule } from './modules/redis/redis.module';
+import { ThrottlerStorageRedisService } from './modules/redis/throttler-storage-redis.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    ThrottlerModule.forRoot([{
-      ttl: 60,
-      limit: 100,
-    }]),
+    ThrottlerModule.forRootAsync({
+      imports: [RedisModule],
+      useFactory: (redisStorage: ThrottlerStorageRedisService) => ({
+        storage: redisStorage,
+        throttlers: [
+          {
+            ttl: 60000,
+            limit: 100,
+          },
+        ],
+      }),
+      inject: [ThrottlerStorageRedisService],
+    }),
     PrismaModule,
     TransactionsModule,
     WsModule,
     FraudModule,
+    RedisModule,
+    HealthModule,
     OrdersModule,
     WebhookModule,
     AdminModule,
