@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException, ForbiddenException } from '@ne
 import { PrismaService } from '../../prisma/prisma.service';
 import { OrderStatus, TransactionType } from '@prisma/client';
 import { TransactionsService } from '../transactions/transactions.service';
+import { NotificationsService } from '../ws/notifications.service';
 
 /**
  * Конфигурация переходов состояний (state machine)
@@ -44,6 +45,7 @@ export class OrdersService {
   constructor(
     private prisma: PrismaService,
     private transactionsService: TransactionsService,
+    private notificationsService: NotificationsService,
   ) {}
 
   /**
@@ -114,6 +116,10 @@ export class OrdersService {
       }
 
       this.logger.log(`Order created: ${order.id} by user ${user.id}`);
+      
+      // Отправляем уведомление
+      this.notificationsService.notifyOrderCreated(order);
+      
       return order;
     });
   }
@@ -184,6 +190,10 @@ export class OrdersService {
       this.logger.log(
         `Order ${order.id} accepted by buyer ${data.buyerId}`,
       );
+      
+      // Отправляем уведомление
+      this.notificationsService.notifyOrderAccepted(updatedOrder, data.buyerId);
+      
       return updatedOrder;
     });
   }
@@ -219,6 +229,10 @@ export class OrdersService {
       });
 
       this.logger.log(`Payment confirmed for order ${orderId}`);
+      
+      // Отправляем уведомление
+      this.notificationsService.notifyPaymentConfirmed(updatedOrder);
+      
       return updatedOrder;
     });
   }
@@ -281,6 +295,10 @@ export class OrdersService {
       });
 
       this.logger.log(`Order ${orderId} completed successfully`);
+      
+      // Отправляем уведомление
+      this.notificationsService.notifyReceiptConfirmed(updatedOrder);
+      
       return updatedOrder;
     });
   }
@@ -326,6 +344,10 @@ export class OrdersService {
       });
 
       this.logger.log(`Order ${orderId} cancelled by user ${userId}`);
+      
+      // Отправляем уведомление
+      this.notificationsService.notifyOrderCancelled(updatedOrder, userId);
+      
       return updatedOrder;
     });
   }
@@ -369,9 +391,14 @@ export class OrdersService {
           description,
           status: 'OPEN',
         },
+        include: { initiator: true },
       });
 
       this.logger.log(`Dispute created for order ${orderId} by user ${userId}`);
+      
+      // Отправляем уведомление
+      this.notificationsService.notifyDisputeCreated(dispute, order);
+      
       return dispute;
     });
   }
@@ -426,6 +453,10 @@ export class OrdersService {
       this.logger.log(
         `Dispute resolved for order ${orderId}. Winner: ${winnerId}`,
       );
+      
+      // Отправляем уведомление
+      this.notificationsService.notifyDisputeResolved(updatedOrder, resolution, winnerId);
+      
       return updatedOrder;
     });
   }

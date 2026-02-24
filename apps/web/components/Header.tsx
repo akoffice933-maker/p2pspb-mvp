@@ -1,11 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu } from 'lucide-react';
+import { Menu, Wifi, WifiOff } from 'lucide-react';
 import { useState } from 'react';
+import { useWebSocketContext } from './WebSocketProvider';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { connected } = useWebSocketContext();
 
   return (
     <header className="border-b border-gray-800 bg-bgdark/95 sticky top-0 z-50">
@@ -35,6 +37,18 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
+          {/* WebSocket статус */}
+          <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-card border border-gray-800">
+            {connected ? (
+              <Wifi className="w-4 h-4 text-green-500" />
+            ) : (
+              <WifiOff className="w-4 h-4 text-gray-500" />
+            )}
+            <span className={`text-xs ${connected ? 'text-green-500' : 'text-gray-500'}`}>
+              {connected ? 'Online' : 'Offline'}
+            </span>
+          </div>
+
           <a
             href="https://t.me/P2PSPB_bot"
             target="_blank"

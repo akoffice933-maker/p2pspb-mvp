@@ -243,10 +243,16 @@ await prisma.admin.create({
 - [x] API для управления сделками
 - [x] Dispute system
 
-### 🔄 Этап 2: WebSocket + Realtime (в процессе)
-- [ ] WebSocket для real-time обновлений
-- [ ] Уведомления о изменении статуса
-- [ ] Комнаты для сторон сделки
+### ✅ Этап 2: WebSocket + Realtime (выполнено)
+- [x] Socket.IO интеграция
+- [x] WebSocket шлюз для сделок
+- [x] Сервис уведомлений (NotificationsService)
+- [x] Real-time обновления статуса заказов
+- [x] Персональные уведомления пользователей
+- [x] Комнаты для сторон сделки
+- [x] WebSocket хук для фронтенда
+- [x] Компонент уведомлений с иконками
+- [x] Индикатор подключения в Header
 
 ### 📈 Этап 3: Anti-fraud (планируется)
 - [ ] Velocity checks
