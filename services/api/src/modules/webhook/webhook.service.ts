@@ -23,7 +23,7 @@ export class WebhookService {
         rate: data.rate,
         minLimit: data.min_limit,
         maxLimit: data.max_limit,
-        availableAmount: data.amount,
+        amount: data.amount,
         paymentMethods: data.payment_methods || ['sbp'],
       });
 

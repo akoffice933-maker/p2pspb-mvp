@@ -6,6 +6,7 @@ import { WebhookModule } from './modules/webhook/webhook.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SseModule } from './modules/sse/sse.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PrismaModule } from './prisma/prisma.module';
       limit: 100,
     }]),
     PrismaModule,
+    TransactionsModule,
     OrdersModule,
     WebhookModule,
     AdminModule,

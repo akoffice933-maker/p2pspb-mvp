@@ -7,7 +7,9 @@
 MVP версия P2P-платформы для обмена USDT/RUB с поддержкой:
 - Наличных расчётов
 - СБП (Система быстрых платежей)
-- Арбитража при спорах
+- **Escrow-система** (резервирование средств)
+- **State Machine** для жизненного цикла сделок
+- **Dispute system** (арбитраж споров)
 - Рейтинговой системы участников
 
 ## 🏗️ Архитектура
@@ -16,6 +18,7 @@ MVP версия P2P-платформы для обмена USDT/RUB с подд
 p2pspb-mvp/
 ├── apps/web/           # Next.js фронтенд + админка
 ├── services/api/       # NestJS бэкенд API
+├── docs/               # Документация
 ├── docker-compose.yml  # Docker конфигурация
 └── .env.example        # Шаблон переменных окружения
 ```
@@ -26,6 +29,7 @@ p2pspb-mvp/
 
 - Docker & Docker Compose
 - Node.js 20+ (для локальной разработки)
+- Минимум 500MB свободного места на диске
 
 ### Запуск через Docker
 
@@ -59,7 +63,7 @@ docker-compose up -d
 cd services/api
 npm install
 npx prisma generate
-npx prisma migrate dev
+npx prisma migrate dev --name init
 npm run dev
 ```
 
@@ -75,7 +79,7 @@ npm run dev
 
 ### Бэкенд
 - **NestJS** - Node.js фреймворк
-- **Prisma** - ORM для работы с БД
+- **Prisma 5** - ORM для работы с БД
 - **PostgreSQL** - база данных
 - **bcryptjs** - хеширование паролей
 - **Helmet** - безопасность HTTP заголовков
@@ -95,22 +99,42 @@ npm run dev
 - `username` - имя пользователя
 - `reputationScore` - рейтинг (по умолчанию 5.0)
 - `totalTrades` - количество сделок
+- `balance` - баланс USDT
+- `blockedBalance` - заблокировано в эскроу
 
 ### Order
 - `id` - UUID
-- `userId` - ссылка на пользователя
+- `userId` - ссылка на создателя
+- `sellerId` / `buyerId` - стороны сделки
 - `type` - BUY/SELL
 - `pair` - торговая пара (USDT/RUB)
 - `rate` - курс обмена
 - `minLimit` / `maxLimit` - лимиты
-- `availableAmount` - доступное количество
+- `amount` - сумма в USDT
+- `reservedAmount` - зарезервировано
 - `paymentMethods` - способы оплаты
-- `status` - ACTIVE/HIDDEN/COMPLETED
+- `status` - PENDING, ACTIVE, RESERVED, PAYMENT_PENDING, PAID, CONFIRMED, COMPLETED, CANCELLED, DISPUTED, RESOLVED, HIDDEN
+- `expiresAt` - время истечения
 
-### Admin
+### Transaction
 - `id` - UUID
-- `username` - логин
-- `passwordHash` - хеш пароля
+- `orderId` - ссылка на заказ
+- `userId` - пользователь
+- `type` - RESERVE, PAYMENT, RELEASE, REFUND, ESCROW
+- `amount` - сумма
+- `balanceBefore` / `balanceAfter` - баланс до/после
+- `description` - описание
+- `metadata` - дополнительные данные
+
+### Dispute
+- `id` - UUID
+- `orderId` - ссылка на заказ
+- `initiatorId` - кто создал
+- `reason` - причина
+- `description` - описание
+- `status` - OPEN, IN_REVIEW, RESOLVED
+- `resolution` - решение арбитра
+- `resolvedBy` - ID админа
 
 ## 🔌 API Endpoints
 
@@ -118,7 +142,17 @@ npm run dev
 - `GET /api/orders` - список активных заявок
   - Query params: `type` (BUY/SELL), `payment` (sbp/cash)
 
+- `GET /api/orders/:id` - детали заказа
+
 - `GET /api/sse/orders` - SSE поток обновлений заявок
+
+### Создание и управление заявками
+- `POST /api/orders/create` - создать новую заявку
+- `POST /api/orders/:id/accept` - принять заявку (покупатель)
+- `POST /api/orders/:id/confirm-payment` - подтвердить оплату (продавец)
+- `POST /api/orders/:id/confirm-receipt` - подтвердить получение (покупатель)
+- `POST /api/orders/:id/cancel` - отменить заявку
+- `POST /api/orders/:id/dispute` - создать спор
 
 ### Webhook (Telegram)
 - `POST /api/webhook/order` - получение заявки из Telegram бота
@@ -127,7 +161,21 @@ npm run dev
 ### Админка
 - `POST /api/admin/login` - вход администратора
 - `GET /api/admin/orders` - все заявки (требуется авторизация)
-- `POST /api/admin/orders/hide` - скрыть заявку (требуется авторизация)
+- `POST /api/admin/orders/:id/hide` - скрыть заявку (требуется авторизация)
+
+## 🔄 State Machine
+
+Жизненный цикл заказа:
+
+```
+PENDING → ACTIVE → RESERVED → PAYMENT_PENDING → PAID → CONFIRMED → COMPLETED
+                     ↓              ↓              ↓
+                  CANCELLED    DISPUTED       CANCELLED
+                                ↓
+                            RESOLVED
+```
+
+Подробная документация: [docs/STATE_MACHINE.md](docs/STATE_MACHINE.md)
 
 ## 🔐 Безопасность
 
@@ -136,6 +184,7 @@ npm run dev
 - CORS с whitelist доменов
 - Валидация всех входящих данных
 - Хеширование паролей (bcrypt)
+- **Атомарные транзакции** через Prisma $transaction
 
 ## 📱 Telegram интеграция
 
@@ -184,17 +233,25 @@ await prisma.admin.create({
 });
 ```
 
-## 🎯 Roadmap MVP
+## 🎯 Roadmap
 
-- [x] Базовая структура проекта
-- [x] CRUD заявок
-- [x] Интеграция с Telegram
-- [x] Админ-панель
-- [x] Real-time обновления (SSE)
-- [ ] JWT авторизация
-- [ ] Уведомления в Telegram
-- [ ] Расширенная аналитика
-- [ ] Мобильная версия
+### ✅ Этап 1: State Machine + Escrow (выполнено)
+- [x] Расширенная схема статусов заказа
+- [x] Таблица Transaction с историей операций
+- [x] Атомарные транзакции через Prisma
+- [x] Методы резервирования/освобождения средств
+- [x] API для управления сделками
+- [x] Dispute system
+
+### 🔄 Этап 2: WebSocket + Realtime (в процессе)
+- [ ] WebSocket для real-time обновлений
+- [ ] Уведомления о изменении статуса
+- [ ] Комнаты для сторон сделки
+
+### 📈 Этап 3: Anti-fraud (планируется)
+- [ ] Velocity checks
+- [ ] Behavior patterns
+- [ ] Multi-account detection
 
 ## 📝 Лицензия
 

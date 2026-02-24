@@ -2,14 +2,22 @@
 
 import { useOrders } from '@/hooks/useOrders';
 import { OfferCard } from './OfferCard';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Filter } from 'lucide-react';
 import { useState } from 'react';
 
 export function OrdersSection() {
   const [filter, setFilter] = useState<'all' | 'BUY' | 'SELL'>('all');
+  const [statusFilter, setStatusFilter] = useState<'active' | 'all'>('active');
   const { orders, isLoading } = useOrders(
     filter !== 'all' ? { type: filter } : undefined
   );
+
+  const filteredOrders = orders.filter((order: any) => {
+    if (statusFilter === 'active') {
+      return ['ACTIVE', 'RESERVED', 'PAYMENT_PENDING'].includes(order.status);
+    }
+    return true;
+  });
 
   return (
     <section id="orders" className="py-20 px-4">
@@ -21,7 +29,11 @@ export function OrdersSection() {
           Выберите подходящее предложение и свяжитесь с контрагентом через Telegram-бота
         </p>
 
-        <div className="flex justify-center gap-2 mb-8">
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          <div className="flex items-center gap-2 mr-4">
+            <Filter className="w-4 h-4 text-gray-400" />
+            <span className="text-sm text-gray-400">Тип:</span>
+          </div>
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -52,19 +64,43 @@ export function OrdersSection() {
           >
             Продажа
           </button>
+
+          <div className="flex items-center gap-2 ml-4 mr-2">
+            <span className="text-sm text-gray-400">Статус:</span>
+          </div>
+          <button
+            onClick={() => setStatusFilter('active')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              statusFilter === 'active'
+                ? 'bg-primary text-black'
+                : 'bg-card text-gray-400 hover:text-white'
+            }`}
+          >
+            Активные
+          </button>
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              statusFilter === 'all'
+                ? 'bg-card text-white'
+                : 'bg-card text-gray-400 hover:text-white'
+            }`}
+          >
+            Все
+          </button>
         </div>
 
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : orders.length === 0 ? (
+        ) : filteredOrders.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
             Нет активных заявок. Будьте первым!
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
-            {orders.map((order: any) => (
+            {filteredOrders.map((order: any) => (
               <OfferCard key={order.id} order={order} />
             ))}
           </div>
