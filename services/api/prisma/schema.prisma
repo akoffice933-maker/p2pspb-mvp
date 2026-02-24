@@ -174,9 +174,11 @@ model LoginSession {
 }
 
 model Admin {
-  id           String   @id @default(uuid())
-  username     String   @unique
-  passwordHash String
-  role         String   @default("ADMIN")  // ADMIN, SUPER_ADMIN
-  createdAt    DateTime @default(now())
+  id               String   @id @default(uuid())
+  username         String   @unique
+  passwordHash     String
+  role             String   @default("ADMIN")  // ADMIN, SUPER_ADMIN
+  twoFactorSecret  String?  // Secret для 2FA
+  twoFactorEnabled Boolean  @default(false)
+  createdAt        DateTime @default(now())
 }

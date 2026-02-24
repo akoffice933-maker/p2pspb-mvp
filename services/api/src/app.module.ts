@@ -12,6 +12,8 @@ import { FraudModule } from './modules/fraud/fraud.module';
 import { HealthModule } from './modules/health/health.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { ThrottlerStorageRedisService } from './modules/redis/throttler-storage-redis.service';
+import { JwtAuthModule } from './modules/auth/jwt-auth.module';
+import * as cookieParser from 'cookie-parser';
 
 @Module({
   imports: [
@@ -35,10 +37,15 @@ import { ThrottlerStorageRedisService } from './modules/redis/throttler-storage-
     FraudModule,
     RedisModule,
     HealthModule,
+    JwtAuthModule,
     OrdersModule,
     WebhookModule,
     AdminModule,
     SseModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer) {
+    consumer.apply(cookieParser()).forRoutes('*');
+  }
+}
