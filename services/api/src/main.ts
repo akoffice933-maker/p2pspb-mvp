@@ -4,13 +4,17 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as helmet from 'helmet';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { SentryHandler, SentryErrorHandler, SentryTracingHandler } from './common/sentry/sentry.init';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalLogger = new Logger('Bootstrap');
 
-  // Global error filter
+  // Sentry handlers (должны быть первыми)
+  app.use(SentryHandler);
+  app.use(SentryTracingHandler);
   app.useGlobalFilters(new AllExceptionsFilter());
+  app.use(SentryErrorHandler);
 
   // Security
   app.use(helmet());
@@ -64,5 +68,6 @@ async function bootstrap() {
   globalLogger.log(`WebSocket gateway available on port ${port}`);
   globalLogger.log(`Swagger docs: http://localhost:${port}/api/docs`);
   globalLogger.log(`Health check: http://localhost:${port}/api/health`);
+  globalLogger.log(`Sentry: ${process.env.SENTRY_DSN ? 'enabled' : 'disabled'}`);
 }
 bootstrap();

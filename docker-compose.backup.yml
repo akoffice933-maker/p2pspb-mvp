@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backup:
+    image: postgres:15-alpine
+    container_name: p2pspb-backup
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-p2pspb}
+      POSTGRES_USER: ${POSTGRES_USER:-p2pspb}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      BACKUP_DIR: /backups
+      RETENTION_DAYS: 7
+    volumes:
+      - ./backups:/backups
+      - ./scripts/backup.sh:/backup.sh
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      apk add --no-cache bash &&
+      chmod +x /backup.sh &&
+      echo "0 2 * * * /backup.sh" > /etc/crontabs/root &&
+      crond -f -l 2
+    depends_on:
+      - postgres
+    networks:
+      - p2pspb-network
+    restart: unless-stopped
+
+volumes:
+  backups:
+
+networks:
+  p2pspb-network:
+    external: true
