@@ -192,9 +192,14 @@ PENDING → ACTIVE → RESERVED → PAYMENT_PENDING → PAID → CONFIRMED → C
 - Rate limiting (100 запросов в минуту)
 - Helmet для защиты HTTP заголовков
 - CORS с whitelist доменов
-- Валидация всех входящих данных
-- Хеширование паролей (bcrypt)
+- Валидация всех входящих данных (class-validator)
+- **JWT авторизация** с httpOnly cookies
+- **2FA (TOTP)** для администраторов
+- **Webhook Secret Token** проверка
+- **Защита от replay-атак** (timestamp validation)
 - **Атомарные транзакции** через Prisma $transaction
+
+📖 Подробно: [docs/SECURITY.md](docs/SECURITY.md)
 
 ## 📱 Telegram интеграция
 
