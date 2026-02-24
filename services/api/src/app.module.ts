@@ -8,6 +8,7 @@ import { SseModule } from './modules/sse/sse.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { WsModule } from './modules/ws/ws.module';
+import { FraudModule } from './modules/fraud/fraud.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { WsModule } from './modules/ws/ws.module';
     PrismaModule,
     TransactionsModule,
     WsModule,
+    FraudModule,
     OrdersModule,
     WebhookModule,
     AdminModule,

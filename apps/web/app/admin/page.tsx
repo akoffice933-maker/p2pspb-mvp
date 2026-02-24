@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
+import { AdminHeader } from '@/components/AdminHeader';
 import { Shield, Eye, EyeOff, Loader2, LogOut } from 'lucide-react';
 
 interface Order {
@@ -79,21 +80,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-bgdark">
-      <div className="border-b border-gray-800 bg-card">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Shield className="w-6 h-6 text-primary" />
-            <span className="text-xl font-bold text-white">P2PSPB Admin</span>
-          </div>
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            Выйти
-          </button>
-        </div>
-      </div>
+      <AdminHeader />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6">Управление заявками</h1>

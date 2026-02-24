@@ -254,10 +254,24 @@ await prisma.admin.create({
 - [x] Компонент уведомлений с иконками
 - [x] Индикатор подключения в Header
 
-### 📈 Этап 3: Anti-fraud (планируется)
-- [ ] Velocity checks
-- [ ] Behavior patterns
-- [ ] Multi-account detection
+### ✅ Этап 3: Anti-fraud (выполнено)
+- [x] FraudDetectionService с velocity checks
+- [x] Multi-account detection (IP + fingerprint)
+- [x] Behavior pattern analysis
+- [x] Risk score система (0-100)
+- [x] Автоматическая блокировка при высоком риске
+- [x] Таблица FraudAlert с типами и статусами
+- [x] Таблица LoginSession для отслеживания сессий
+- [x] Интеграция с State Machine
+- [x] Админ-панель для просмотра алертов
+- [x] Real-time уведомления админам о фроде
+- [x] Документация ANTI_FRAUD.md
+
+### 📈 Будущие улучшения
+- [ ] Machine learning для улучшения детекции
+- [ ] Гео-блокировка по IP
+- [ ] KYC верификация
+- [ ] Расширенная аналитика
 
 ## 📝 Лицензия
 

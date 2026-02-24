@@ -31,6 +31,26 @@ enum TransactionType {
   ESCROW       // Перевод на эскроу
 }
 
+// Типы фрод-алертов
+enum AlertType {
+  VELOCITY           // Слишком частые операции
+  AMOUNT             // Подозрительная сумма
+  MULTI_ACCOUNT      // Несколько аккаунтов
+  BEHAVIOR           // Аномальное поведение
+  DEVICE             // Подозрительное устройство
+  IP                 // Подозрительный IP
+  CANCEL_RATE        // Высокий процент отмен
+  DISPUTE_RATE       // Частые споры
+}
+
+// Статусы алертов
+enum AlertStatus {
+  OPEN         // Открыт
+  REVIEWING    // На проверке
+  RESOLVED     // Решён (ложный)
+  CONFIRMED    // Подтверждён (фрод)
+}
+
 model User {
   id              String   @id @default(uuid())
   telegramId      String   @unique
@@ -39,12 +59,16 @@ model User {
   totalTrades     Int      @default(0)
   balance         Float    @default(0.0)  // Баланс USDT
   blockedBalance  Float    @default(0.0)  // Заблокировано в эскроу
+  riskScore       Float    @default(0.0)  // Уровень риска (0-100)
+  isBlocked       Boolean  @default(false)  // Заблокирован
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   orders        Order[]
   transactions  Transaction[]
   disputes      Dispute[]
+  alerts        FraudAlert[]
+  loginSessions LoginSession[]
 }
 
 model Order {
@@ -113,6 +137,40 @@ model Dispute {
   updatedAt   DateTime @updatedAt
 
   @@index([status])
+}
+
+model FraudAlert {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  type        AlertType
+  status      AlertStatus @default(OPEN)
+  score       Int         // Уровень опасности (0-100)
+  title       String
+  description String?
+  metadata    Json?       // Детали алерта
+  reviewedBy  String?     // ID админа
+  resolvedAt  DateTime?
+  createdAt   DateTime    @default(now())
+
+  @@index([status])
+  @@index([userId])
+  @@index([type])
+}
+
+model LoginSession {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  ipAddress  String?
+  userAgent  String?
+  fingerprint String? // Отпечаток устройства
+  lastActive DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([fingerprint])
 }
 
 model Admin {

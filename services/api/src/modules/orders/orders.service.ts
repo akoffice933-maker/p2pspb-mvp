@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { OrderStatus, TransactionType } from '@prisma/client';
 import { TransactionsService } from '../transactions/transactions.service';
 import { NotificationsService } from '../ws/notifications.service';
+import { FraudDetectionService } from '../fraud/fraud-detection.service';
 
 /**
  * Конфигурация переходов состояний (state machine)
@@ -46,6 +47,7 @@ export class OrdersService {
     private prisma: PrismaService,
     private transactionsService: TransactionsService,
     private notificationsService: NotificationsService,
+    private fraudDetectionService: FraudDetectionService,
   ) {}
 
   /**
@@ -58,7 +60,7 @@ export class OrdersService {
   /**
    * Создать новую заявку
    */
-  async createOrder(data: CreateOrderDto) {
+  async createOrder(data: CreateOrderDto, ipAddress?: string, fingerprint?: string) {
     return this.prisma.$transaction(async (tx) => {
       // Найти или создать пользователя
       let user = await tx.user.findUnique({
@@ -72,6 +74,20 @@ export class OrdersService {
             username: data.username || 'Аноним',
           },
         });
+      }
+
+      // ANTI-FRAUD: Проверка перед созданием
+      const fraudCheck = await this.fraudDetectionService.checkBeforeCreateOrder(
+        user.id,
+        data.amount,
+        ipAddress,
+        fingerprint,
+      );
+
+      if (fraudCheck.isFraud) {
+        throw new ForbiddenException(
+          `Заявка отклонена: ${fraudCheck.reasons.join('; ')}`,
+        );
       }
 
       // Проверка баланса для продавца
@@ -119,6 +135,9 @@ export class OrdersService {
       
       // Отправляем уведомление
       this.notificationsService.notifyOrderCreated(order);
+      
+      // ANTI-FRAUD: Обновляем risk score
+      await this.fraudDetectionService.updateUserRiskScore(user.id);
       
       return order;
     });

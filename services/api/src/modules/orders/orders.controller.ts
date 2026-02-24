@@ -8,10 +8,12 @@ import {
   UseGuards,
   Req,
   BadRequestException,
+  Headers,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Throttle } from '@nestjs/throttler';
 import { AdminGuard } from '../../common/guards/admin.guard';
+import { Request } from 'express';
 
 @Controller('orders')
 export class OrdersController {
@@ -33,7 +35,7 @@ export class OrdersController {
 
   @Post('create')
   @Throttle({ default: { limit: 10, ttl: 60000 } })
-  async createOrder(@Body() body: any) {
+  async createOrder(@Req() req: Request, @Body() body: any, @Headers('x-fingerprint') fingerprint?: string) {
     // Валидация входных данных
     const {
       telegram_id,
@@ -52,6 +54,9 @@ export class OrdersController {
       );
     }
 
+    // Получаем IP адрес
+    const ipAddress = req.ip || req.socket.remoteAddress;
+
     return this.ordersService.createOrder({
       telegramId: telegram_id,
       username,
@@ -61,7 +66,7 @@ export class OrdersController {
       maxLimit: parseFloat(max_limit || Infinity),
       amount: parseFloat(amount),
       paymentMethods: payment_methods || ['sbp'],
-    });
+    }, ipAddress, fingerprint);
   }
 
   @Post(':id/accept')
