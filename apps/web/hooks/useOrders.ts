@@ -4,13 +4,30 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { api } from '@/lib/api';
 
-export function useOrders(filters?: { type?: string; payment?: string }) {
+type SortBy = 'createdAt' | 'rate' | 'amount';
+type SortOrder = 'asc' | 'desc';
+
+export function useOrders(
+  filters?: { type?: string; payment?: string },
+  page: number = 1,
+  limit: number = 20,
+  sortBy?: SortBy,
+  sortOrder?: SortOrder,
+) {
   const queryClient = useQueryClient();
 
-  const { data: orders = [], isLoading } = useQuery({
-    queryKey: ['orders', filters],
+  const { data, isLoading } = useQuery({
+    queryKey: ['orders', filters, page, limit, sortBy, sortOrder],
     queryFn: async () => {
-      const { data } = await api.get('/orders', { params: filters });
+      const { data } = await api.get('/orders', {
+        params: {
+          ...filters,
+          page,
+          limit,
+          sortBy,
+          sortOrder,
+        },
+      });
       return data;
     },
   });
@@ -23,7 +40,7 @@ export function useOrders(filters?: { type?: string; payment?: string }) {
 
     eventSource.onmessage = (event) => {
       const newOrders = JSON.parse(event.data);
-      queryClient.setQueryData(['orders', filters], newOrders);
+      queryClient.setQueryData(['orders', filters, page, limit, sortBy, sortOrder], newOrders);
     };
 
     eventSource.onerror = (error) => {
@@ -31,7 +48,7 @@ export function useOrders(filters?: { type?: string; payment?: string }) {
     };
 
     return () => eventSource.close();
-  }, [filters, queryClient]);
+  }, [filters, page, limit, sortBy, sortOrder, queryClient]);
 
-  return { orders, isLoading };
+  return { data, isLoading };
 }

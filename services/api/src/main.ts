@@ -1,11 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as helmet from 'helmet';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const globalLogger = new Logger('Bootstrap');
+
+  // Global error filter
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // Security
   app.use(helmet());
@@ -19,6 +24,9 @@ async function bootstrap() {
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
+    transformOptions: {
+      enableImplicitConversion: true,
+    },
   }));
 
   // Global prefix
@@ -51,8 +59,10 @@ async function bootstrap() {
 
   const port = process.env.PORT || 4000;
   await app.listen(port);
-  console.log(`API running on port ${port}`);
-  console.log(`WebSocket gateway available on port ${port}`);
-  console.log(`Swagger docs: http://localhost:${port}/api/docs`);
+  
+  globalLogger.log(`API running on port ${port}`);
+  globalLogger.log(`WebSocket gateway available on port ${port}`);
+  globalLogger.log(`Swagger docs: http://localhost:${port}/api/docs`);
+  globalLogger.log(`Health check: http://localhost:${port}/api/health`);
 }
 bootstrap();

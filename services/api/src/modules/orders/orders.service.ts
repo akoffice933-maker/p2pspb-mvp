@@ -481,9 +481,16 @@ export class OrdersService {
   }
 
   /**
-   * Получить активные заявки
+   * Получить активные заявки с пагинацией и сортировкой
    */
-  async getActiveOrders(filters?: { type?: string; payment?: string }) {
+  async getActiveOrders(filters?: {
+    type?: string;
+    payment?: string;
+    page?: number;
+    limit?: number;
+    sortBy?: 'createdAt' | 'rate' | 'amount';
+    sortOrder?: 'asc' | 'desc';
+  }) {
     const where: any = {
       status: {
         in: [OrderStatus.ACTIVE, OrderStatus.RESERVED, OrderStatus.PAYMENT_PENDING],
@@ -498,38 +505,58 @@ export class OrdersService {
       where.paymentMethods = { has: filters.payment };
     }
 
-    const orders = await this.prisma.order.findMany({
-      where,
-      include: {
-        user: {
-          select: {
-            username: true,
-            reputationScore: true,
-            totalTrades: true,
-          },
-        },
-        seller: {
-          select: {
-            id: true,
-            username: true,
-            reputationScore: true,
-            totalTrades: true,
-          },
-        },
-        buyer: {
-          select: {
-            id: true,
-            username: true,
-            reputationScore: true,
-            totalTrades: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-    });
+    const page = Math.max(1, filters?.page || 1);
+    const limit = Math.min(100, Math.max(1, filters?.limit || 20));
+    const skip = (page - 1) * limit;
 
-    return orders;
+    const sortBy = filters?.sortBy || 'createdAt';
+    const sortOrder = filters?.sortOrder || 'desc';
+
+    const [orders, total] = await this.prisma.$transaction([
+      this.prisma.order.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              username: true,
+              reputationScore: true,
+              totalTrades: true,
+            },
+          },
+          seller: {
+            select: {
+              id: true,
+              username: true,
+              reputationScore: true,
+              totalTrades: true,
+            },
+          },
+          buyer: {
+            select: {
+              id: true,
+              username: true,
+              reputationScore: true,
+              totalTrades: true,
+            },
+          },
+        },
+        orderBy: { [sortBy]: sortOrder },
+        skip,
+        take: limit,
+      }),
+      this.prisma.order.count({ where }),
+    ]);
+
+    return {
+      data: orders,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasMore: page * limit < total,
+      },
+    };
   }
 
   /**

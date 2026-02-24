@@ -29,16 +29,31 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Получить список активных заявок' })
+  @ApiOperation({ summary: 'Получить список активных заявок с пагинацией' })
   @ApiQuery({ name: 'type', required: false, enum: ['BUY', 'SELL'] })
   @ApiQuery({ name: 'payment', required: false, description: 'Способ оплаты (sbp, cash)' })
-  @ApiResponse({ status: 200, description: 'Список заявок' })
+  @ApiQuery({ name: 'page', required: false, description: 'Номер страницы', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, description: 'Элементов на страницу', example: 20 })
+  @ApiQuery({ name: 'sortBy', required: false, enum: ['createdAt', 'rate', 'amount'] })
+  @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'] })
+  @ApiResponse({ status: 200, description: 'Список заявок с пагинацией' })
   @Throttle({ default: { limit: 30, ttl: 60000 } })
   async getOrders(
     @Query('type') type?: string,
     @Query('payment') payment?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('sortBy') sortBy?: 'createdAt' | 'rate' | 'amount',
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
   ) {
-    return this.ordersService.getActiveOrders({ type, payment });
+    return this.ordersService.getActiveOrders({
+      type,
+      payment,
+      page: page ? parseInt(String(page), 10) : undefined,
+      limit: limit ? parseInt(String(limit), 10) : undefined,
+      sortBy,
+      sortOrder,
+    });
   }
 
   @Get(':id')
