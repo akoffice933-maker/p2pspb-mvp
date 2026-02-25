@@ -13,6 +13,7 @@ import { HealthModule } from './modules/health/health.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { ThrottlerStorageRedisService } from './modules/redis/throttler-storage-redis.service';
 import { JwtAuthModule } from './modules/auth/jwt-auth.module';
+import { BlockchainModule } from './modules/blockchain/blockchain.module';
 import * as cookieParser from 'cookie-parser';
 
 @Module({
@@ -38,6 +39,7 @@ import * as cookieParser from 'cookie-parser';
     RedisModule,
     HealthModule,
     JwtAuthModule,
+    BlockchainModule,
     OrdersModule,
     WebhookModule,
     AdminModule,
