@@ -14,6 +14,7 @@ import { RedisModule } from './modules/redis/redis.module';
 import { ThrottlerStorageRedisService } from './modules/redis/throttler-storage-redis.service';
 import { JwtAuthModule } from './modules/auth/jwt-auth.module';
 import { BlockchainModule } from './modules/blockchain/blockchain.module';
+import { DemoModule } from './modules/demo/demo.module';
 import * as cookieParser from 'cookie-parser';
 
 @Module({
@@ -40,6 +41,7 @@ import * as cookieParser from 'cookie-parser';
     HealthModule,
     JwtAuthModule,
     BlockchainModule,
+    DemoModule,
     OrdersModule,
     WebhookModule,
     AdminModule,

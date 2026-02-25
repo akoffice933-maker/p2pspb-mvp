@@ -3,6 +3,7 @@ import { Features } from '@/components/Features';
 import { OrdersSection } from '@/components/OrdersSection';
 import { Footer } from '@/components/Footer';
 import { Notifications } from '@/components/Notifications';
+import { DemoStatus } from '@/components/DemoStatus';
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <OrdersSection />
       <Footer />
       <Notifications />
+      <DemoStatus />
     </main>
   );
 }
