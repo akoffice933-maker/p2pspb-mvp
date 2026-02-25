@@ -4,6 +4,7 @@ import { OrderStatus, TransactionType } from '@prisma/client';
 import { TransactionsService } from '../transactions/transactions.service';
 import { NotificationsService } from '../ws/notifications.service';
 import { FraudDetectionService } from '../fraud/fraud-detection.service';
+import { SettlementStrategyFactory } from './strategies/settlement-strategy.factory';
 
 /**
  * Конфигурация переходов состояний (state machine)
@@ -48,6 +49,7 @@ export class OrdersService {
     private transactionsService: TransactionsService,
     private notificationsService: NotificationsService,
     private fraudDetectionService: FraudDetectionService,
+    private settlementFactory: SettlementStrategyFactory,
   ) {}
 
   /**
@@ -97,7 +99,7 @@ export class OrdersService {
         );
       }
 
-      // Создать заявку
+      // Создать заявку в БД
       const order = await tx.order.create({
         data: {
           userId: user.id,
@@ -114,6 +116,30 @@ export class OrdersService {
         },
         include: { user: true },
       });
+
+      // STRATEGY PATTERN: Создание в блокчейне (если включено)
+      const strategy = this.settlementFactory.getStrategy();
+      const orderHash = this.createOrderHash(order.id);
+      
+      const settlementResult = await strategy.create({
+        orderId: order.id,
+        sellerId: user.id,
+        buyerId: data.type === 'BUY' ? user.id : undefined,
+        amount: data.amount,
+        rate: data.rate,
+        orderHash,
+      });
+
+      // Сохранить blockchain данные если есть
+      if (settlementResult.blockchainTradeId) {
+        await tx.order.update({
+          where: { id: order.id },
+          data: {
+            blockchainTradeId: settlementResult.blockchainTradeId,
+            txHash: settlementResult.txHash,
+          },
+        });
+      }
 
       // Для продавцов сразу резервируем средства
       if (data.type === 'SELL') {
@@ -141,6 +167,14 @@ export class OrdersService {
       
       return order;
     });
+  }
+
+  /**
+   * Создать хеш заказа
+   */
+  private createOrderHash(orderId: string): string {
+    const crypto = require('crypto');
+    return crypto.createHash('sha256').update(orderId + Date.now()).digest('hex');
   }
 
   /**
