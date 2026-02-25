@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { Header } from '@/components/Header';
 import { WebSocketProvider } from '@/components/WebSocketProvider';
+import { BlockchainProvider } from '@/components/BlockchainProvider';
 
 const inter = Inter({ subsets: ['cyrillic', 'latin'] });
 
@@ -31,8 +32,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <WebSocketProvider>
-            <Header />
-            {children}
+            <BlockchainProvider>
+              <Header />
+              {children}
+            </BlockchainProvider>
           </WebSocketProvider>
         </Providers>
       </body>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Menu, Wifi, WifiOff } from 'lucide-react';
 import { useState } from 'react';
 import { useWebSocketContext } from './WebSocketProvider';
+import { WalletConnect } from './WalletConnect';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,14 +50,8 @@ export function Header() {
             </span>
           </div>
 
-          <a
-            href="https://t.me/P2PSPB_bot"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-primary hover:bg-primary/90 text-black px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          >
-            Открыть бота
-          </a>
+          {/* Wallet Connect */}
+          <WalletConnect />
 
           <button
             className="md:hidden text-gray-400 hover:text-white"
