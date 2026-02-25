@@ -1,0 +1,117 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "D:\\webP2P\\contracts\\src\\P2PSPBEscrow.sol": {
+      "lastModificationDate": 1772046043500,
+      "contentHash": "9933e9422ebc400c14cd6f6c4a5537ad",
+      "sourceName": "src/P2PSPBEscrow.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./PSPBToken.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "P2PSPBEscrow"
+      ]
+    },
+    "D:\\webP2P\\contracts\\src\\PSPBToken.sol": {
+      "lastModificationDate": 1772046043501,
+      "contentHash": "46cb90804f846bdff66c68e568a39041",
+      "sourceName": "src/PSPBToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "PSPBToken"
+      ]
+    },
+    "D:\\webP2P\\contracts\\src\\P2PSPBFeeSplitter.sol": {
+      "lastModificationDate": 1772046043500,
+      "contentHash": "27d1e1ee0620a9510f06d4b5f4f58729",
+      "sourceName": "src/P2PSPBFeeSplitter.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./PSPBToken.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "P2PSPBFeeSplitter"
+      ]
+    }
+  }
+}
