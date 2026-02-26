@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ethers } from 'ethers';
+import { KmsService } from '../kms/kms.service';
 
 /**
  * @title BlockchainService
@@ -12,12 +13,14 @@ export class BlockchainService implements OnModuleInit {
   
   private provider: ethers.Provider;
   private wallet: ethers.Wallet;
+  private kmsEnabled: boolean;
   
   // Адреса контрактов (заполняются после деплоя)
   private contractAddresses = {
     token: process.env.PSPB_TOKEN_ADDRESS || '',
     escrow: process.env.PSPB_ESCROW_ADDRESS || '',
     feeSplitter: process.env.PSPB_FEE_SPLITTER_ADDRESS || '',
+    multiSigWallet: process.env.PSPB_MULTI_SIG_WALLET_ADDRESS || '',
   };
 
   // ABI контрактов (упрощённые версии)
@@ -43,7 +46,7 @@ export class BlockchainService implements OnModuleInit {
     'function claimAirdrop() external',
   ];
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService, private kmsService: KmsService) {}
 
   async onModuleInit() {
     await this.initializeProvider();
@@ -54,16 +57,38 @@ export class BlockchainService implements OnModuleInit {
    */
   private async initializeProvider() {
     const rpcUrl = this.configService.get<string>('BLOCKCHAIN_RPC_URL');
-    const privateKey = this.configService.get<string>('BLOCKCHAIN_PRIVATE_KEY');
+    const encryptedPrivateKey = this.configService.get<string>('BLOCKCHAIN_PRIVATE_KEY_ENCRYPTED');
+    const useKms = this.configService.get<boolean>('AWS_KMS_ENABLED') || false;
+    
+    this.kmsEnabled = useKms;
 
-    if (!rpcUrl || !privateKey) {
-      this.logger.warn('Blockchain credentials not configured. Running in offline mode.');
+    if (!rpcUrl) {
+      this.logger.warn('Blockchain RPC URL not configured. Running in offline mode.');
       return;
     }
 
     try {
-      // Создаём провайдер и кошелёк
+      // Создаём провайдер
       this.provider = new ethers.JsonRpcProvider(rpcUrl);
+      
+      // Получаем приватный ключ
+      let privateKey: string;
+      
+      if (useKms && encryptedPrivateKey) {
+        // Расшифровываем через KMS
+        this.logger.log('Decrypting private key via AWS KMS...');
+        privateKey = await this.kmsService.decryptPrivateKey(encryptedPrivateKey);
+        this.logger.log('Private key decrypted successfully');
+      } else if (this.configService.get<string>('BLOCKCHAIN_PRIVATE_KEY')) {
+        // Fallback для локальной разработки (НЕ для production!)
+        this.logger.warn('Using local private key (NOT FOR PRODUCTION)');
+        privateKey = this.configService.get<string>('BLOCKCHAIN_PRIVATE_KEY');
+      } else {
+        this.logger.warn('No private key configured. Running in read-only mode.');
+        return;
+      }
+      
+      // Создаём кошелёк
       this.wallet = new ethers.Wallet(privateKey, this.provider);
 
       // Проверяем подключение
@@ -73,6 +98,7 @@ export class BlockchainService implements OnModuleInit {
       this.logger.log(
         `Connected to blockchain: ChainID ${network}, Balance: ${ethers.formatEther(balance)} ETH`,
       );
+      this.logger.log(`KMS Enabled: ${this.kmsEnabled}`);
     } catch (error) {
       this.logger.error(`Failed to connect to blockchain: ${error.message}`);
     }

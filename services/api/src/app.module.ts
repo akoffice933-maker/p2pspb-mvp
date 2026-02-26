@@ -16,6 +16,7 @@ import { JwtAuthModule } from './modules/auth/jwt-auth.module';
 import { BlockchainModule } from './modules/blockchain/blockchain.module';
 import { DemoModule } from './modules/demo/demo.module';
 import { AmlModule } from './modules/aml/aml.module';
+import { KmsModule } from './modules/kms/kms.module';
 import * as cookieParser from 'cookie-parser';
 
 @Module({
@@ -44,6 +45,7 @@ import * as cookieParser from 'cookie-parser';
     BlockchainModule,
     DemoModule,
     AmlModule,
+    KmsModule,
     OrdersModule,
     WebhookModule,
     AdminModule,
