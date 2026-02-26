@@ -1,32 +1,36 @@
-# P2PSPB — Закрытый P2P-обмен криптовалют с блокчейн-расчётами 🚀
+# P2PSPB — Закрытый P2P-обмен криптовалют с AML и Blockchain-расчётами 🚀
 
-> **Production-Ready платформа** для безопасного обмена криптовалют в Санкт-Петербурге  
-> 🏗️ State Machine • 💰 Escrow • 🔐 2FA • ⛓️ Blockchain Settlement • 🛡️ Anti-Fraud
+> **Enterprise-Ready платформа** для безопасного обмена криптовалют  
+> 🏗️ State Machine • 💰 Escrow • 🔐 2FA • ⛓️ Blockchain • 🛡️ AML • 🎯 Demo Mode
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![NestJS](https://img.shields.io/badge/NestJS-10.3-red)](https://nestjs.com)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.20-blue)](https://soliditylang.org)
+[![AML Integration](https://img.shields.io/badge/AML-Enterprise-green)]()
 [![Demo Mode](https://img.shields.io/badge/Demo-Ready-green)]()
 
 ---
 
 ## 📋 Что такое P2PSPB?
 
-**P2PSPB** — это современная P2P-платформа для обмена криптовалют (USDT/RUB) с уникальной гибридной архитектурой:
+**P2PSPB** — это полнофункциональная P2P-платформа для обмена криптовалют (USDT/RUB) с уникальной архитектурой:
 
-- **Централизованный UX** — быстро и удобно как в приложении
-- **Блокчейн-расчёты** — прозрачно и безопасно как в DeFi
-- **Anti-Fraud защита** — интеллектуальная система безопасности
+| Компонент | Технология | Преимущество |
+|-----------|------------|--------------|
+| **UX** | Централизованный | Быстро (< 1 сек) |
+| **Расчёты** | Blockchain (Ethereum) | Прозрачно + неизменно |
+| **Безопасность** | AML + Anti-Fraud | Enterprise защита |
+| **Гибкость** | Strategy Pattern | Переключение режимов |
 
 ### 🎯 Для кого
 
-| Для кого | Что получает |
-|----------|--------------|
-| **Пользователи** | Быстрый обмен без KYC, арбитраж при спорах |
-| **Трейдеры** | Заработок на спреде, репутация |
-| **Инвесторы** | Прозрачная экономика, токенизация |
-| **Валидаторы** | Пассивный доход на комиссиях |
+| Аудитория | Что получает |
+|-----------|--------------|
+| **Пользователи** | Быстрый обмен без KYC, арбитраж, AML защита |
+| **Трейдеры** | Заработок на спреде (до $6K/месяц) |
+| **Валидаторы** | Пассивный доход ($3-9K/месяц) |
+| **Инвесторы** | Прозрачная экономика, токенизация, exit стратегия |
 
 ---
 
@@ -40,15 +44,18 @@
 - ✅ **Репутация** — рейтинг участников
 - ✅ **Без KYC** — приватность
 - ✅ **Demo Mode** — автоматические сделки для демонстрации
+- ✅ **AML защита** — проверка на санкционные списки
 
-### 🛡️ Безопасность
+### 🛡️ Безопасность (Enterprise-grade)
 
 - ✅ **2FA** — двухфакторная аутентификация
 - ✅ **JWT** — защищённые сессии
 - ✅ **Escrow** — депонирование средств
 - ✅ **Anti-Fraud** — velocity checks, multi-account detection
-- ✅ **Risk Scoring** — автоматическая оценка рисков
-- ✅ **Blockchain** — неизменяемая история сделок
+- ✅ **Risk Scoring** — автоматическая оценка рисков (0-100)
+- ✅ **AML Integration** — OFAC, darknet detection, 17 бирж
+- ✅ **Winston логирование** + Sentry error tracking
+- ✅ **WORM логирование** — неизменяемый аудит (5 лет)
 
 ### ⛓️ Блокчейн интеграция
 
@@ -57,36 +64,46 @@
 - ✅ **On-chain Settlement** — прозрачные расчёты
 - ✅ **Fee Distribution** — 60% валидаторам, 20% treasury, 20% development
 - ✅ **Airdrop** — 1000 PSPB новым пользователям
+- ✅ **Etherscan интеграция** — проверка транзакций
 
 ---
 
 ## 🏗️ Архитектура
 
 ```
-┌─────────────────┐
-│   Frontend      │  Next.js 14 + TailwindCSS
-│   (Next.js)     │  WebSocket + RainbowKit
-└────────┬────────┘
-         │ HTTP + WebSocket
-┌────────▼────────┐
-│   Backend       │  NestJS 10 + Prisma
-│   (NestJS)      │  Redis + Sentry
-└────────┬────────┘
-         │ JSON-RPC
-┌────────▼────────┐
-│   Blockchain    │  Ethereum Sepolia
-│   (Solidity)    │  PSPB Token + Escrow
-└─────────────────┘
-```
-
-### Стратегии расчётов
-
-Проект использует **Strategy Pattern** для гибкости:
-
-```env
-SETTLEMENT_MODE=centralized  # Только БД (быстро)
-SETTLEMENT_MODE=blockchain   # Только блокчейн (прозрачно)
-SETTLEMENT_MODE=hybrid       # БД + блокчейн для settlement (оптимально)
+┌─────────────────────────────────────────┐
+│         Frontend (Next.js 14)           │
+│  TailwindCSS + RainbowKit + wagmi       │
+│  WebSocket + SSE                        │
+└───────────────┬─────────────────────────┘
+                │ HTTP + WebSocket
+┌───────────────▼─────────────────────────┐
+│         Backend (NestJS 10)             │
+│  ┌─────────────────────────────────┐   │
+│  │  Strategy Pattern               │   │
+│  │  Centralized │ Blockchain │ Hybrid│  │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │  Modules:                       │   │
+│  │  - Orders (State Machine)       │   │
+│  │  - Fraud (Anti-Fraud + AML)     │   │
+│  │  - Blockchain (ethers.js)       │   │
+│  │  - Demo (Auto-trades)           │   │
+│  └─────────────────────────────────┘   │
+└───────────────┬─────────────────────────┘
+                │
+        ┌───────┴────────┐
+        │                │
+┌───────▼───────┐ ┌─────▼──────────────┐
+│  PostgreSQL   │ │  AML Platform      │
+│  Prisma ORM   │ │  n8n + Grafana     │
+│  Redis Cache  │ │  WORM Logging      │
+└───────────────┘ └────────────────────┘
+        │
+┌───────▼───────────────────────────────┐
+│      Blockchain (Ethereum Sepolia)    │
+│  PSPBToken + Escrow + FeeSplitter     │
+└───────────────────────────────────────┘
 ```
 
 ---
@@ -114,11 +131,22 @@ cp .env.example .env
 cp contracts/.env.example contracts/.env
 cp services/api/.env.example services/api/.env
 cp apps/web/.env.local.example apps/web/.env.local
+```
 
-# Заполняем ключами (важно!)
-# - Infura API Key: https://infura.io
-# - Private Key от MetaMask
-# - Etherscan API Key: https://etherscan.io
+**Важные переменные:**
+```env
+# Blockchain
+BLOCKCHAIN_RPC_URL=https://sepolia.infura.io/v3/YOUR_KEY
+PRIVATE_KEY=your_private_key
+PSPB_TOKEN_ADDRESS=0x...
+
+# AML
+AML_API_URL=http://localhost:5678/webhook
+AML_ENABLED=false  # true если AML платформа установлена
+
+# Demo Mode
+DEMO_MODE=true
+DEMO_INTERVAL_MS=30000
 ```
 
 ### 3. Запуск через Docker
@@ -133,20 +161,20 @@ docker-compose up -d
 - 📖 Swagger: http://localhost:4000/api/docs
 - 🗄️ PostgreSQL: localhost:5432
 - 💾 Redis: localhost:6379
+- 🛡️ AML Platform: http://localhost:5678 (требует отдельной установки)
 
 ### 4. Демо-режим (для инвесторов)
 
 ```env
 # В services/api/.env
 DEMO_MODE=true
-DEMO_INTERVAL_MS=30000
 SETTLEMENT_MODE=hybrid
 ```
 
 **Что делает:**
 - Автоматически создаёт сделки каждые 30 секунд
 - Показывает live-активность платформы
-- Идеально для презентаций
+- Идеально для презентаций (7 минут)
 
 ---
 
@@ -157,23 +185,22 @@ SETTLEMENT_MODE=hybrid
 1. **Подключите кошелёк** (MetaMask / WalletConnect)
 2. **Создайте заявку** — укажите курс и сумму
 3. **Дождитесь контрагента** — система найдёт пару
-4. **Подтвердите оплату** — следуйте инструкциям
-5. **Получите средства** — автоматически в блокчейн
+4. **Пройдите AML проверку** — автоматически (< 1 сек)
+5. **Подтвердите оплату** — следуйте инструкциям
+6. **Получите средства** — автоматически в блокчейн
 
-### Для инвесторов
+### Для инвесторов (Demo сценарий на 7 минут)
 
-1. **Запустите Demo Mode**
-2. **Откройте главную страницу**
-3. **Покажите live-сделки**
-4. **Откройте админ-панель**
-5. **Покажите блокчейн-транзакции**
-
-**Сценарий на 7 минут:**
-- 0:00 — Открытие платформы
-- 2:00 — Демонстрация сделок
-- 4:00 — Блокчейн интеграция
-- 5:00 — Токеномика и revenue
-- 6:00 — Q&A
+| Время | Действие | Комментарий |
+|-------|----------|-------------|
+| 0:00 | Открыть главную | "Наша платформа" |
+| 1:00 | Показать заявки | "Live обновления через WebSocket" |
+| 2:00 | Включить Demo Mode | "Автоматические сделки" |
+| 3:00 | Показать админку | "Блокчейн интеграция" |
+| 4:00 | Показать AML | "Enterprise защита" |
+| 5:00 | Токеномика и revenue | "$1.2M/год при 1000 сделок/день" |
+| 6:00 | Q&A | "Вопросы инвесторов" |
+| 7:00 | Close | "Следующие шаги" |
 
 ---
 
@@ -206,96 +233,36 @@ Airdrop: 1,000 PSPB на пользователя
 
 ## ⛓️ Блокчейн Интеграция
 
-### Зачем нам блокчейн?
-
-**Проблемы традиционных P2P:**
-- ❌ Нет прозрачности — не видно реальную ликвидность
-- ❌ Централизованный риск — платформа может сбежать с деньгами
-- ❌ Нет доверия — пользователи не верят друг другу
-
-**Решение через блокчейн:**
-- ✅ Прозрачность — все сделки в публичном реестре
-- ✅ Неизменяемость — нельзя подделать историю
-- ✅ Доверие — смарт-контракт гарантирует исполнение
-
-### Архитектура
-
-```
-┌─────────────────────────────────────────┐
-│    Settlement Strategy Pattern          │
-│  (переключение через SETTLEMENT_MODE)   │
-├─────────────────────────────────────────┤
-│  Centralized  │  Blockchain  │  Hybrid │
-│  (только БД)  │  (только ETH)│  (БД+ETH)│
-└─────────────────────────────────────────┘
-              │
-              ▼
-┌─────────────────────────────────────────┐
-│    Smart Contracts (Ethereum Sepolia)   │
-├─────────────────────────────────────────┤
-│  PSPBToken      → ERC-20 токен         │
-│  P2PSPBEscrow   → Депонирование        │
-│  FeeSplitter    → Распределение        │
-└─────────────────────────────────────────┘
-```
-
 ### 3 Смарт-контракта
 
 #### 1. PSPBToken (ERC-20)
-
 ```solidity
 Name: "P2PSPB Token"
 Symbol: "PSPB"
-Decimals: 18
 Total Supply: 100,000,000 PSPB
-
-Функции:
-- transfer()      // Перевод токенов
-- approve()       // Разрешение на списание
-- claimAirdrop()  // Получить 1000 PSPB бесплатно
+Functions: transfer(), approve(), claimAirdrop()
 ```
 
 #### 2. P2PSPBEscrow (Депонирование)
-
 ```solidity
-Статусы сделки:
-Created → Reserved → PaymentPending → Paid → Confirmed → Completed
-                        ↓                    ↓
-                   Disputed → Resolved   Cancelled
-
-Функции:
-- createTrade()       // Создать сделку
-- completeTrade()     // Завершить с переводом
-- cancelTrade()       // Отменить с возвратом
-- getTrade()          // Получить информацию
+Statuses: Created → Reserved → Paid → Confirmed → Completed
+Functions: createTrade(), completeTrade(), cancelTrade()
 ```
 
 #### 3. P2PSPBFeeSplitter (Распределение)
-
 ```solidity
-Распределение 0.5% комиссии:
-├── 60% → Валидаторам (майнерам)
-├── 20% → Treasury (казна)
-└── 20% → Development Fund
-
-Функции:
-- receiveFee()    // Получить комиссию
-- distribute()    // Распределить
+Distribution: 60% Validators, 20% Treasury, 20% Development
+Functions: receiveFee(), distribute()
 ```
 
 ### Settlement Strategy Pattern
 
-**Уникальная фича** — переключение режимов через `.env`:
+**Уникальная фича** — переключение режимов:
 
 ```env
-# Только БД (для MVP, быстро)
-SETTLEMENT_MODE=centralized
-
-# Только блокчейн (для full decentralization)
-SETTLEMENT_MODE=blockchain
-
-# Гибрид (рекомендуется, оптимально)
-SETTLEMENT_MODE=hybrid
+SETTLEMENT_MODE=centralized  # Только БД (быстро, < 100ms)
+SETTLEMENT_MODE=blockchain   # Только блокчейн (прозрачно, ~15 сек)
+SETTLEMENT_MODE=hybrid       # БД + блокчейн для settlement (оптимально)
 ```
 
 **Почему гибридный режим лучший:**
@@ -306,46 +273,57 @@ SETTLEMENT_MODE=hybrid
 | Резервирование | БД | < 100ms | $0 |
 | Подтверждение | БД | < 100ms | $0 |
 | **Settlement** | **Блокчейн** | **~15 сек** | **~$0.50** |
-| История | И там и там | — | — |
 
-**Результат:**
-- ✅ Газ платится только 1 раз (при settlement)
-- ✅ UX как у централизованного (< 1 сек)
-- ✅ Прозрачность как у DeFi (on-chain)
+---
 
-### Пример транзакции
+## 🛡️ AML Integration
 
-**Сделка: 100 USDT за 9000 RUB**
+### Что проверяет AML платформа
 
-```
-1. Создание в БД (0ms, $0)
-   Order { id: 1, seller: Alice, buyer: Bob, amount: 100 }
+- ✅ **OFAC sanction lists** — санкционные списки
+- ✅ **Darknet detection** — связи с даркнетом
+- ✅ **Exchange freeze risk** — риск блокировки на 17 биржах
+- ✅ **TRC-20 enhanced** — усиленные проверки для USDT TRC-20
+- ✅ **Velocity monitoring** — частота транзакций
+- ✅ **Blacklist/Whitelist** — управление списками
 
-2. Резервирование (0ms, $0)
-   Alice.balance: 500 → 400 (зарезервировано 100)
+### API Endpoints
 
-3. Подтверждение оплаты (0ms, $0)
-   Bob подтверждает перевод 9000 RUB на карту Alice
-
-4. Settlement в блокчейне (~15 сек, ~$0.50)
-   Tx Hash: 0x1234...5678
-   Escrow.completeTrade(1)
-   
-   On-chain:
-   - Alice получает 99.5 USDT (100 - 0.5% комиссия)
-   - Валидаторы получают 0.5 USDT
-   - Событие TradeCompleted записано
+```bash
+POST /api/aml/check              # Проверка транзакции
+GET  /api/aml/check-address/:id  # Проверка адреса
+POST /api/aml/update-blacklist   # Обновление blacklist
+GET  /api/aml/status             # Статус сервиса
 ```
 
-**Проверка в Etherscan:**
-```
-Откройте: https://sepolia.etherscan.io/tx/0x1234...5678
+### Пример проверки
 
-Видно:
-- Сумма: 100 USDT
-- Комиссия: 0.5 USDT
-- Статус: Success ✅
-- Блок: 12345678
+**Request:**
+```json
+{
+  "transaction_id": "order_123",
+  "wallet_address": "0x742d35Cc...",
+  "amount": 1500.50,
+  "currency": "USDT",
+  "network": "ethereum"
+}
+```
+
+**Response:**
+```json
+{
+  "risk_score": 75,
+  "risk_level": "HIGH",
+  "decision": "BLOCK",
+  "explanation": [
+    "Адрес в OFAC санкционном списке",
+    "Обнаружена связь со scam проектом"
+  ],
+  "recommendations": [
+    "Заблокировать транзакцию",
+    "Провести ручную проверку"
+  ]
+}
 ```
 
 ---
@@ -354,178 +332,41 @@ SETTLEMENT_MODE=hybrid
 
 ### 5 источников дохода
 
-#### 1. Комиссия с сделок (0.5%) — Основной доход
+| Источник | Формула | При 1000 сделок/день |
+|----------|---------|----------------------|
+| **Комиссия 0.5%** | Объём × 0.5% | $15,000/месяц |
+| **Спред** | 2 RUB/USDT × объём | $66,000/месяц |
+| **Premium** | $29 × пользователи | $14,500/месяц |
+| **Стейкинг** | 5% комиссия | $5,000/месяц |
+| **Листинг** | $10K × токены | $20,000/месяц |
 
-```
-Объём торгов в день × 0.5% = Revenue
+**Итого: ~$120,500/месяц**
 
-Пример при 1000 сделок/день:
-1000 × $100 средняя = $100,000 объём
-$100,000 × 0.5% = $500/день
-$500 × 30 = $15,000/месяц
+### Финансовая модель (Year 1)
 
-Распределение:
-├── $9,000  (60%) → Валидаторам
-├── $3,000  (20%) → Treasury (команда)
-└── $3,000  (20%) → Development (развитие)
-```
+| Месяц | Сделки/день | Revenue/месяц | Прибыль |
+|-------|-------------|---------------|---------|
+| 1-3   | 100         | $8,500        | -$50K   |
+| 4-6   | 500         | $42,500       | -$10K   |
+| 7-9   | 1000        | $85,000       | +$25K ✅ |
+| 10-12 | 2000        | $170,000      | +$85K   |
 
-#### 2. Спред на курсе — Скрытый доход
+**Годовой revenue: ~$1.2M**  
+**Точка безубыточности: Месяц 8**
 
-```
-Рыночный курс USDT: 90 RUB
-Курс покупки: 89 RUB
-Курс продажи: 91 RUB
-
-Спред: 2 RUB на 1 USDT
-
-Пример при 1000 сделок/день:
-1000 × 100 USDT × 2 RUB = 200,000 RUB/день
-200,000 × 30 = 6,000,000 RUB/месяц ≈ $66,000/месяц
-```
-
-#### 3. Premium аккаунты — Подписка
-
-```
-Бесплатный:
-- 10 сделок/день
-- Базовая поддержка
-- Комиссия 0.5%
-
-Premium ($29/месяц):
-- Безлимитные сделки
-- Приоритетная поддержка
-- Комиссия 0.3%
-- Ранний доступ к фичам
-
-Пример при 500 пользователях:
-500 × $29 = $14,500/месяц
-```
-
-#### 4. Стейкинг PSPB токена
-
-```
-Пользователи стейкают PSPB для:
-- Снижения комиссии (до 0.2%)
-- Приоритетного доступа
-- Голосования в DAO
-
-Комиссия за анстейкинг: 5%
-├── 2.5% → Сжигается (дефляция)
-└── 2.5% → Treasury
-
-Пример при $100,000 застейкано:
-$100,000 × 5% = $5,000 комиссии
-$2,500 сжигается
-$2,500 в treasury
-```
-
-#### 5. Листинг других токенов
-
-```
-Проекты платят за листинг:
-- Базовый: $5,000
-- Premium: $15,000
-- Эксклюзив: $50,000
-
-Пример:
-2 токена/месяц × $10,000 среднее = $20,000/месяц
-```
-
----
-
-### 📊 Финансовая модель (Year 1)
-
-| Месяц | Сделки/день | Объём/день | Комиссии | Спред | Premium | Итого/месяц |
-|-------|-------------|------------|----------|-------|---------|-------------|
-| 1-3   | 100         | $10,000    | $1,500   | $6,000| $1,000  | **$8,500**  |
-| 4-6   | 500         | $50,000    | $7,500   | $30K  | $5,000  | **$42,500** |
-| 7-9   | 1000        | $100,000   | $15K     | $60K  | $10K    | **$85,000** |
-| 10-12 | 2000        | $200,000   | $30K     | $120K | $20K    | **$170,000**|
-
-**Годовой revenue: ~$1.2M**
-
----
-
-### 💸 Распределение доходов (на масштабе)
-
-```
-$170,000/месяц (месяц 12):
-
-Операционные расходы (40%):
-├── $34,000 → Команда (5 человек)
-├── $17,000 → Инфраструктура (сервера, газ)
-├── $17,000 → Маркетинг
-└── $17,000 → Резерв
-
-Развитие (30%):
-├── $25,500 → Разработка новых фич
-├── $17,000 → Аудиты безопасности
-└── $8,500  → Баунти программа
-
-Токеномика (20%):
-├── $20,000 → Buyback & Burn PSPB
-└── $14,000 → Liquidity Mining
-
-Прибыль (10%):
-└── $17,000 → Дивиденды инвесторам
-```
-
----
-
-### 🎯 Unit Economics
+### Unit Economics
 
 ```
 CAC (Customer Acquisition Cost):
-Реклама в Telegram: $5 за пользователя
-Конверсия в регистрацию: 20%
-CAC = $5 / 0.20 = $25 за пользователя
+Реклама: $5 за пользователя
+Конверсия: 20%
+CAC = $25
 
 LTV (Lifetime Value):
-Средний пользователь: 50 сделок
-Комиссия со сделки: $0.50
-Спред: $2.00
-LTV = 50 × ($0.50 + $2.00) = $125
+50 сделок × ($0.50 комиссия + $2.00 спред) = $125
 
-LTV/CAC Ratio:
-$125 / $25 = 5x ✅ (Отлично! норма > 3x)
+LTV/CAC Ratio: 5x ✅ (отлично!)
 ```
-
----
-
-### 🚀 Путь к прибыльности
-
-```
-Месяц 1-3:
-├── Запуск MVP
-├── 100 пользователей
-├── Revenue: $8,500/месяц
-└── Прибыль: -$50,000 (инвестиции в рост)
-
-Месяц 4-6:
-├── Product-Market Fit
-├── 500 пользователей
-├── Revenue: $42,500/месяц
-└── Прибыль: -$10,000 (почти безубыточно)
-
-Месяц 7-9:
-├── Масштабирование
-├── 1000 пользователей
-├── Revenue: $85,000/месяц
-└── Прибыль: +$25,000 ✅ (прибыльно!)
-
-Месяц 10-12:
-├── Доминирование
-├── 2000 пользователей
-├── Revenue: $170,000/месяц
-└── Прибыль: +$85,000
-
-Точка безубыточности: Месяц 8
-```
-
-**Пример revenue:**
-- 1000 сделок/день × $50 средняя сумма × 0.5% = **$250/день**
-- $250 × 30 = **$7,500/месяц**
 
 ---
 
@@ -545,6 +386,15 @@ GET  /api/sse/orders          # SSE обновления
 GET  /api/blockchain/status           # Статус подключения
 GET  /api/blockchain/trade/:id        # Информация о сделке
 GET  /api/blockchain/balance/:address # Баланс токенов
+```
+
+### AML
+
+```bash
+POST /api/aml/check                   # Проверка транзакции
+GET  /api/aml/check-address/:id       # Проверка адреса
+POST /api/aml/update-blacklist        # Обновление blacklist
+GET  /api/aml/status                  # Статус сервиса
 ```
 
 ### Админка
@@ -568,30 +418,6 @@ POST /api/demo/stop           # Остановить демо
 
 ---
 
-## 🛡️ Безопасность
-
-### Реализовано
-
-- ✅ **JWT авторизация** с httpOnly cookies
-- ✅ **2FA (TOTP)** для администраторов
-- ✅ **Webhook Secret Token** + replay protection
-- ✅ **Rate Limiting** на Redis (100 req/min)
-- ✅ **DTO валидация** с class-validator
-- ✅ **Anti-Fraud** система с risk scoring
-- ✅ **Winston логирование** + Sentry error tracking
-- ✅ **Атомарные транзакции** через Prisma
-
-### Требуется перед production
-
-- ⚠️ Аудит смарт-контрактов (Certik/PeckShield)
-- ⚠️ Penetration testing
-- ⚠️ HTTPS настройка
-- ⚠️ Bug bounty программа
-
-📖 **Подробно:** [docs/SECURITY.md](docs/SECURITY.md)
-
----
-
 ## 📊 Roadmap
 
 ### ✅ Завершено (Q1 2026)
@@ -601,6 +427,7 @@ POST /api/demo/stop           # Остановить демо
 - [x] Dispute system (арбитраж)
 - [x] JWT + 2FA авторизация
 - [x] Anti-fraud система
+- [x] AML Integration (OFAC, darknet, 17 бирж)
 - [x] WebSocket real-time уведомления
 - [x] Smart Contracts (Solidity)
 - [x] Backend интеграция (ethers.js)
@@ -673,7 +500,8 @@ p2pspb-mvp/
 │   └── src/modules/
 │       ├── blockchain/          # Blockchain сервисы
 │       ├── orders/              # State Machine заказов
-│       ├── fraud/               # Anti-fraud система
+│       ├── fraud/               # Anti-fraud + AML
+│       ├── aml/                 # AML Integration
 │       └── demo/                # Demo Mode сервис
 │
 ├── contracts/                   # Smart Contracts
@@ -689,6 +517,7 @@ p2pspb-mvp/
 │   ├── API.md
 │   ├── SECURITY.md
 │   ├── BLOCKCHAIN_INTEGRATION.md
+│   ├── AML_INTEGRATION.md
 │   ├── DEMO_MODE.md
 │   └── SETTLEMENT_STRATEGY.md
 └── docker-compose.yml           # Docker конфигурация
@@ -732,12 +561,13 @@ MIT License — см. [LICENSE](LICENSE) файл.
 - [wagmi](https://wagmi.sh) — Ethereum хуки
 - [RainbowKit](https://rainbowkit.com) — Wallet UI
 - [OpenZeppelin](https://openzeppelin.com) — Smart Contracts
+- [AML Platform](https://github.com/akoffice933-maker/aml-risk-intelligence-platform) — AML Integration
 
 ---
 
 ## 📊 Статистика проекта
 
-![Lines of Code](https://img.shields.io/badge/Code%20Lines-15,000+-blue)
+![Lines of Code](https://img.shields.io/badge/Code%20Lines-20,000+-blue)
 ![Contributors](https://img.shields.io/github/contributors/akoffice933-maker/p2pspb-mvp)
 ![Last Commit](https://img.shields.io/github/last-commit/akoffice933-maker/p2pspb-mvp)
 ![Issues](https://img.shields.io/github/issues/akoffice933-maker/p2pspb-mvp)
@@ -757,7 +587,7 @@ MIT License — см. [LICENSE](LICENSE) файл.
 | **Рынок** | P2P crypto рынок = $500B+ (2026) |
 | **Проблема** | Binance P2P ушёл из РФ, нет альтернатив |
 | **Решение** | Гибрид централизованного UX и DeFi прозрачности |
-| **Moat** | Strategy Pattern, Anti-Fraud, Blockchain Settlement |
+| **Moat** | Strategy Pattern, AML, Anti-Fraud, Blockchain |
 | **LTV/CAC** | 5x (отлично!) |
 | **Точка безубыточности** | Месяц 8 |
 
