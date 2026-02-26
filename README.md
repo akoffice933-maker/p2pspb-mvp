@@ -1,61 +1,92 @@
-# P2PSPB — Закрытый P2P-обмен криптовалют с блокчейн-интеграцией 🚀
+# P2PSPB — Закрытый P2P-обмен криптовалют с блокчейн-расчётами 🚀
 
-> **Production-Ready P2P платформа** для обмена криптовалют в Санкт-Петербурге  
-> 🏗️ State Machine • 💰 Escrow • 🔐 2FA • ⛓️ Blockchain • 🛡️ Anti-Fraud
+> **Production-Ready платформа** для безопасного обмена криптовалют в Санкт-Петербурге  
+> 🏗️ State Machine • 💰 Escrow • 🔐 2FA • ⛓️ Blockchain Settlement • 🛡️ Anti-Fraud
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![NestJS](https://img.shields.io/badge/NestJS-10.3-red)](https://nestjs.com)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.20-blue)](https://soliditylang.org)
-[![Security: Awaiting Audit](https://img.shields.io/badge/Security-Awaiting%20Audit-orange)]()
+[![Demo Mode](https://img.shields.io/badge/Demo-Ready-green)]()
 
 ---
 
-## 📋 О проекте
+## 📋 Что такое P2PSPB?
 
-**P2PSPB** — это полнофункциональная P2P-платформа для обмена криптовалют с полной интеграцией блокчейна, системой безопасности и готовой инфраструктурой для запуска.
+**P2PSPB** — это современная P2P-платформа для обмена криптовалют (USDT/RUB) с уникальной гибридной архитектурой:
 
-### ✨ Ключевые особенности
+- **Централизованный UX** — быстро и удобно как в приложении
+- **Блокчейн-расчёты** — прозрачно и безопасно как в DeFi
+- **Anti-Fraud защита** — интеллектуальная система безопасности
 
-- 🔄 **State Machine** — 11 статусов заказа для полного контроля сделки
-- 💰 **Escrow система** — депонирование средств в смарт-контракте
-- 🔐 **2FA + JWT** — двухфакторная аутентификация для админки
-- ⛓️ **Blockchain** — ERC-20 токен PSPB + запись сделок в блокчейн
-- 🛡️ **Anti-Fraud** — velocity checks, multi-account detection, risk scoring
-- 📡 **Real-time** — WebSocket уведомления о всех событиях
-- 🎨 **Modern UI** — адаптивный интерфейс с тёмной темой
+### 🎯 Для кого
+
+| Для кого | Что получает |
+|----------|--------------|
+| **Пользователи** | Быстрый обмен без KYC, арбитраж при спорах |
+| **Трейдеры** | Заработок на спреде, репутация |
+| **Инвесторы** | Прозрачная экономика, токенизация |
+| **Валидаторы** | Пассивный доход на комиссиях |
+
+---
+
+## ✨ Ключевые возможности
+
+### 🔥 Для пользователей
+
+- ✅ **Мгновенные сделки** — < 1 секунды
+- ✅ **Наличные и СБП** — популярные способы оплаты
+- ✅ **Арбитраж** — защита при спорах
+- ✅ **Репутация** — рейтинг участников
+- ✅ **Без KYC** — приватность
+- ✅ **Demo Mode** — автоматические сделки для демонстрации
+
+### 🛡️ Безопасность
+
+- ✅ **2FA** — двухфакторная аутентификация
+- ✅ **JWT** — защищённые сессии
+- ✅ **Escrow** — депонирование средств
+- ✅ **Anti-Fraud** — velocity checks, multi-account detection
+- ✅ **Risk Scoring** — автоматическая оценка рисков
+- ✅ **Blockchain** — неизменяемая история сделок
+
+### ⛓️ Блокчейн интеграция
+
+- ✅ **ERC-20 токен PSPB** — 100M supply
+- ✅ **Smart Contracts** — автоматическое исполнение
+- ✅ **On-chain Settlement** — прозрачные расчёты
+- ✅ **Fee Distribution** — 60% валидаторам, 20% treasury, 20% development
+- ✅ **Airdrop** — 1000 PSPB новым пользователям
 
 ---
 
 ## 🏗️ Архитектура
 
 ```
-p2pspb-mvp/
-├── apps/web/                    # Next.js фронтенд + админка
-│   ├── app/
-│   │   ├── profile/             ← Страница профиля с балансами
-│   │   ├── admin/               ← Админ-панель (JWT + 2FA)
-│   │   └── legal/               ← Правовая информация
-│   └── components/
-│       ├── WalletConnect.tsx    ← Подключение кошелька
-│       ├── PSPBBalance.tsx      ← Балансы токенов
-│       └── OnChainHistory.tsx   ← История транзакций
-│
-├── services/api/                # NestJS бэкенд
-│   └── src/modules/
-│       ├── blockchain/          ← Blockchain сервисы
-│       ├── orders/              ← State Machine заказов
-│       ├── fraud/               ← Anti-fraud система
-│       └── auth/                ← JWT + 2FA
-│
-├── contracts/                   # Smart Contracts (Solidity)
-│   ├── PSPBToken.sol            ← ERC-20 токен
-│   ├── P2PSPBEscrow.sol         ← Депонирование сделок
-│   └── P2PSPBFeeSplitter.sol    ← Распределение комиссий
-│
-├── k8s/                         # Kubernetes манифесты
-├── docs/                        # Документация
-└── docker-compose.yml           # Docker конфигурация
+┌─────────────────┐
+│   Frontend      │  Next.js 14 + TailwindCSS
+│   (Next.js)     │  WebSocket + RainbowKit
+└────────┬────────┘
+         │ HTTP + WebSocket
+┌────────▼────────┐
+│   Backend       │  NestJS 10 + Prisma
+│   (NestJS)      │  Redis + Sentry
+└────────┬────────┘
+         │ JSON-RPC
+┌────────▼────────┐
+│   Blockchain    │  Ethereum Sepolia
+│   (Solidity)    │  PSPB Token + Escrow
+└─────────────────┘
+```
+
+### Стратегии расчётов
+
+Проект использует **Strategy Pattern** для гибкости:
+
+```env
+SETTLEMENT_MODE=centralized  # Только БД (быстро)
+SETTLEMENT_MODE=blockchain   # Только блокчейн (прозрачно)
+SETTLEMENT_MODE=hybrid       # БД + блокчейн для settlement (оптимально)
 ```
 
 ---
@@ -78,8 +109,16 @@ cd p2pspb-mvp
 ### 2. Настройка окружения
 
 ```bash
+# Копируем примеры
 cp .env.example .env
-# Заполните .env своими данными
+cp contracts/.env.example contracts/.env
+cp services/api/.env.example services/api/.env
+cp apps/web/.env.local.example apps/web/.env.local
+
+# Заполняем ключами (важно!)
+# - Infura API Key: https://infura.io
+# - Private Key от MetaMask
+# - Etherscan API Key: https://etherscan.io
 ```
 
 ### 3. Запуск через Docker
@@ -89,145 +128,56 @@ docker-compose up -d
 ```
 
 **Сервисы:**
-- Фронтенд: http://localhost:3000
-- API: http://localhost:4000
-- Swagger: http://localhost:4000/api/docs
-- PostgreSQL: localhost:5432
-- Redis: localhost:6379
+- 🌐 Фронтенд: http://localhost:3000
+- 🔧 API: http://localhost:4000
+- 📖 Swagger: http://localhost:4000/api/docs
+- 🗄️ PostgreSQL: localhost:5432
+- 💾 Redis: localhost:6379
 
-### 4. Локальная разработка
+### 4. Демо-режим (для инвесторов)
 
-```bash
-# Бэкенд
-cd services/api
-npm install
-npm run dev
-
-# Фронтенд
-cd apps/web
-npm install
-npm run dev
+```env
+# В services/api/.env
+DEMO_MODE=true
+DEMO_INTERVAL_MS=30000
+SETTLEMENT_MODE=hybrid
 ```
+
+**Что делает:**
+- Автоматически создаёт сделки каждые 30 секунд
+- Показывает live-активность платформы
+- Идеально для презентаций
 
 ---
 
-## 🔧 Технологический стек
+## 📱 Как использовать
 
-### Backend
-| Технология | Версия | Назначение |
-|------------|--------|------------|
-| **NestJS** | 10.3 | API фреймворк |
-| **Prisma** | 5.22 | ORM для PostgreSQL |
-| **PostgreSQL** | 15 | База данных |
-| **Redis** | 7 | Rate limiting + кэш |
-| **ethers.js** | 6.10 | Работа с блокчейном |
-| **Winston** | 3.11 | Логирование |
-| **Sentry** | 7.100 | Error tracking |
+### Для трейдеров
 
-### Frontend
-| Технология | Версия | Назначение |
-|------------|--------|------------|
-| **Next.js** | 14.1 | React фреймворк |
-| **TypeScript** | 5 | Типизация |
-| **TailwindCSS** | 3.4 | Стилизация |
-| **wagmi** | 1.4 | Ethereum хуки |
-| **viem** | 1.21 | Ethereum клиент |
-| **RainbowKit** | 1.3 | UI для кошелька |
-| **Socket.IO** | 4.7 | Real-time |
+1. **Подключите кошелёк** (MetaMask / WalletConnect)
+2. **Создайте заявку** — укажите курс и сумму
+3. **Дождитесь контрагента** — система найдёт пару
+4. **Подтвердите оплату** — следуйте инструкциям
+5. **Получите средства** — автоматически в блокчейн
 
-### Blockchain
-| Контракт | Стандарт | Назначение |
-|----------|----------|------------|
-| **PSPBToken** | ERC-20 | Токен платформы (100M supply) |
-| **P2PSPBEscrow** | Custom | Депонирование средств |
-| **P2PSPBFeeSplitter** | Custom | Распределение комиссий |
+### Для инвесторов
+
+1. **Запустите Demo Mode**
+2. **Откройте главную страницу**
+3. **Покажите live-сделки**
+4. **Откройте админ-панель**
+5. **Покажите блокчейн-транзакции**
+
+**Сценарий на 7 минут:**
+- 0:00 — Открытие платформы
+- 2:00 — Демонстрация сделок
+- 4:00 — Блокчейн интеграция
+- 5:00 — Токеномика и revenue
+- 6:00 — Q&A
 
 ---
 
-## 📁 Структура БД
-
-### User
-```prisma
-- id, telegramId, username
-- balance, blockedBalance        # Балансы USDT
-- riskScore, isBlocked           # Anti-fraud
-- orders, transactions, disputes
-```
-
-### Order
-```prisma
-- id, userId, sellerId, buyerId
-- type (BUY/SELL), rate, amount
-- status (11 состояний)
-- reservedAmount, expiresAt
-- blockchainTradeId, txHash      # Интеграция с блокчейном
-```
-
-### Transaction
-```prisma
-- id, orderId, userId
-- type (RESERVE/PAYMENT/RELEASE/REFUND)
-- amount, balanceBefore, balanceAfter
-```
-
-### FraudAlert
-```prisma
-- id, userId, type
-- status (OPEN/REVIEWING/RESOLVED/CONFIRMED)
-- score (0-100)
-```
-
----
-
-## 🔌 API Endpoints
-
-### Публичные
-- `GET /api/orders` — список заявок (с пагинацией)
-- `GET /api/orders/:id` — детали заказа
-- `GET /api/sse/orders` — SSE обновления
-
-### Блокчейн
-- `GET /api/blockchain/status` — статус подключения
-- `GET /api/blockchain/trade/:id` — информация о сделке
-- `GET /api/blockchain/balance/:address` — баланс токенов
-
-### Админка
-- `POST /api/admin/login` — вход (JWT + 2FA)
-- `GET /api/admin/orders` — все заявки
-- `GET /api/fraud/alerts` — фрод-алерты
-
-### Webhook
-- `POST /api/webhook/order` — Telegram webhook (с secret token)
-
-📖 **Полная документация:** [docs/API.md](docs/API.md)
-
----
-
-## 🛡️ Безопасность
-
-### Реализовано
-- ✅ **JWT авторизация** с httpOnly cookies
-- ✅ **2FA (TOTP)** для администраторов
-- ✅ **Webhook Secret Token** + replay protection
-- ✅ **Rate Limiting** на Redis (100 req/min)
-- ✅ **DTO валидация** с class-validator
-- ✅ **Anti-Fraud** система с risk scoring
-- ✅ **Winston логирование** + Sentry error tracking
-- ✅ **Атомарные транзакции** через Prisma
-
-### Требуется перед production
-- ⚠️ Аудит смарт-контрактов (Certik/PeckShield)
-- ⚠️ Penetration testing
-- ⚠️ HTTPS настройка
-- ⚠️ Bug bounty программа
-
-📖 **Подробно:** [docs/SECURITY.md](docs/SECURITY.md)
-
----
-
-## ⛓️ Blockchain интеграция
-
-### Токеномика PSPB
+## 💰 Токеномика PSPB
 
 ```
 Максимальное предложение: 100,000,000 PSPB
@@ -238,10 +188,10 @@ npm run dev
 ├── 20% Команда (20M)
 └── 10% Резерв (10M)
 
-Airdrop: 1,000 PSPB на пользователя (первые 10,000)
+Airdrop: 1,000 PSPB на пользователя
 ```
 
-### Распределение комиссий
+### Модель монетизации
 
 ```
 Комиссия платформы: 0.5%
@@ -252,17 +202,72 @@ Airdrop: 1,000 PSPB на пользователя (первые 10,000)
 └── 20% Development (развитие)
 ```
 
-### Жизненный цикл сделки
+**Пример revenue:**
+- 1000 сделок/день × $50 средняя сумма × 0.5% = **$250/день**
+- $250 × 30 = **$7,500/месяц**
 
-```
-CREATED → RESERVED → PAYMENT_PENDING → PAID → CONFIRMED → COMPLETED
-                     ↓              ↓              ↓
-                  CANCELLED    DISPUTED       CANCELLED
-                                ↓
-                            RESOLVED
+---
+
+## 🔌 API Endpoints
+
+### Публичные
+
+```bash
+GET  /api/orders              # Список заявок (с пагинацией)
+GET  /api/orders/:id          # Детали заказа
+GET  /api/sse/orders          # SSE обновления
 ```
 
-📖 **Подробно:** [docs/BLOCKCHAIN_INTEGRATION.md](docs/BLOCKCHAIN_INTEGRATION.md)
+### Блокчейн
+
+```bash
+GET  /api/blockchain/status           # Статус подключения
+GET  /api/blockchain/trade/:id        # Информация о сделке
+GET  /api/blockchain/balance/:address # Баланс токенов
+```
+
+### Админка
+
+```bash
+POST /api/admin/login         # Вход (JWT + 2FA)
+GET  /api/admin/orders        # Все заявки
+GET  /api/fraud/alerts        # Фрод-алерты
+POST /api/admin/2fa/setup     # Настройка 2FA
+```
+
+### Demo
+
+```bash
+GET  /api/demo/status         # Статус демо-режима
+POST /api/demo/start          # Запустить демо
+POST /api/demo/stop           # Остановить демо
+```
+
+📖 **Полная документация:** [docs/API.md](docs/API.md)
+
+---
+
+## 🛡️ Безопасность
+
+### Реализовано
+
+- ✅ **JWT авторизация** с httpOnly cookies
+- ✅ **2FA (TOTP)** для администраторов
+- ✅ **Webhook Secret Token** + replay protection
+- ✅ **Rate Limiting** на Redis (100 req/min)
+- ✅ **DTO валидация** с class-validator
+- ✅ **Anti-Fraud** система с risk scoring
+- ✅ **Winston логирование** + Sentry error tracking
+- ✅ **Атомарные транзакции** через Prisma
+
+### Требуется перед production
+
+- ⚠️ Аудит смарт-контрактов (Certik/PeckShield)
+- ⚠️ Penetration testing
+- ⚠️ HTTPS настройка
+- ⚠️ Bug bounty программа
+
+📖 **Подробно:** [docs/SECURITY.md](docs/SECURITY.md)
 
 ---
 
@@ -279,8 +284,8 @@ CREATED → RESERVED → PAYMENT_PENDING → PAID → CONFIRMED → COMPLETED
 - [x] Smart Contracts (Solidity)
 - [x] Backend интеграция (ethers.js)
 - [x] Frontend интеграция (wagmi + RainbowKit)
-- [x] Пагинация и сортировка
-- [x] Winston логирование + Sentry
+- [x] Strategy Pattern для settlement
+- [x] Demo Mode для презентаций
 
 ### 🔄 В процессе (Q2 2026)
 
@@ -329,49 +334,44 @@ npm run build          # Production сборка
 
 ---
 
-## 📈 Мониторинг
+## 📁 Структура проекта
 
-### Health Checks
-
-- `GET /api/health` — статус сервиса
-- `GET /api/ready` — готовность к работе
-
-### Метрики
-
-- Запросов в минуту
-- Среднее время ответа
-- Количество активных сделок
-- Total Volume (USDT)
-- Fraud alerts count
-
-### Логи
-
-- `logs/error.log` — ошибки
-- `logs/combined.log` — все события
-
----
-
-## 🚀 Деплой
-
-### Docker Compose (Development)
-
-```bash
-docker-compose up -d
 ```
-
-### Kubernetes (Production)
-
-```bash
-kubectl apply -f k8s/namespace.yaml
-kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/secrets.yaml
-kubectl apply -f k8s/postgres-statefulset.yaml
-kubectl apply -f k8s/api-deployment.yaml
-kubectl apply -f k8s/web-deployment.yaml
-kubectl apply -f k8s/ingress.yaml
+p2pspb-mvp/
+├── apps/web/                    # Next.js фронтенд
+│   ├── app/
+│   │   ├── profile/             # Страница профиля
+│   │   ├── admin/               # Админ-панель
+│   │   └── legal/               # Правовая информация
+│   └── components/
+│       ├── WalletConnect.tsx    # Подключение кошелька
+│       ├── PSPBBalance.tsx      # Балансы токенов
+│       └── OnChainHistory.tsx   # История транзакций
+│
+├── services/api/                # NestJS бэкенд
+│   └── src/modules/
+│       ├── blockchain/          # Blockchain сервисы
+│       ├── orders/              # State Machine заказов
+│       ├── fraud/               # Anti-fraud система
+│       └── demo/                # Demo Mode сервис
+│
+├── contracts/                   # Smart Contracts
+│   ├── src/
+│   │   ├── PSPBToken.sol        # ERC-20 токен
+│   │   ├── P2PSPBEscrow.sol     # Депонирование
+│   │   └── P2PSPBFeeSplitter.sol # Распределение
+│   └── scripts/
+│       └── deploy.ts            # Скрипт деплоя
+│
+├── k8s/                         # Kubernetes манифесты
+├── docs/                        # Документация
+│   ├── API.md
+│   ├── SECURITY.md
+│   ├── BLOCKCHAIN_INTEGRATION.md
+│   ├── DEMO_MODE.md
+│   └── SETTLEMENT_STRATEGY.md
+└── docker-compose.yml           # Docker конфигурация
 ```
-
-📖 **Подробно:** [docs/PRODUCTION.md](docs/PRODUCTION.md)
 
 ---
 
@@ -424,3 +424,24 @@ MIT License — см. [LICENSE](LICENSE) файл.
 ---
 
 **Made with ❤️ in Saint Petersburg**
+
+---
+
+## 🚀 Для инвесторов
+
+### Почему P2PSPB?
+
+1. **Рынок:** P2P crypto рынок = $500B+ (2026)
+2. **Проблема:** Binance P2P ушёл из РФ, нет альтернатив
+3. **Решение:** Гибрид централизованного UX и DeFi прозрачности
+4. **Moat:** Strategy Pattern, Anti-Fraud, Blockchain Settlement
+
+### Ask
+
+Ищем **$500k** для:
+- Запуска и тестирования (3 месяца)
+- Маркетинга и привлечения пользователей
+- Аудита смарт-контрактов
+- Расширения команды
+
+**Contact:** legal@p2pspb.com
