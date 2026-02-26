@@ -3,6 +3,7 @@ dist/
 .next/
 .env
 .env.local
+.env.example
 *.log
 .DS_Store
 coverage/
@@ -11,3 +12,8 @@ coverage/
 *.swp
 *.swo
 prisma/migrations/
+
+# Contracts
+contracts/.env
+contracts/cache/
+contracts/artifacts/
