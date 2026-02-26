@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AlertType, AlertStatus } from '@prisma/client';
 import { NotificationsService } from '../ws/notifications.service';
+import { AmlService } from '../aml/aml.service';
 
 export interface FraudCheckResult {
   isFraud: boolean;
@@ -47,6 +48,7 @@ export class FraudDetectionService {
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
+    private amlService: AmlService,
   ) {}
 
   /**
@@ -96,14 +98,52 @@ export class FraudDetectionService {
       };
     }
 
-    // 3. Velocity check - количество заявок за 24 часа
+    // 3. AML CHECK - Проверка через AML платформу
+    try {
+      const amlResult = await this.amlService.checkTransaction({
+        transaction_id: `order_${userId}_${Date.now()}`,
+        wallet_address: user.telegramId,
+        amount,
+        currency: 'USDT',
+        network: 'ethereum',
+        timestamp: new Date().toISOString(),
+      });
+
+      if (amlResult.decision === 'BLOCK') {
+        score += 50;
+        reasons.push(...amlResult.explanation);
+        
+        await this.createAlert({
+          userId,
+          type: AlertType.BEHAVIOR,
+          score: amlResult.risk_score,
+          title: 'AML Check Failed',
+          description: amlResult.explanation.join('; '),
+          metadata: amlResult,
+        });
+      } else if (amlResult.decision === 'REVIEW') {
+        score += 25;
+        reasons.push('Requires manual review (AML)');
+      }
+    } catch (error) {
+      this.logger.warn(`AML check error: ${error.message}`);
+    }
+
+    // 4. Проверка blacklist адресов
+    const blacklistCheck = await this.amlService.checkAddress(user.telegramId);
+    if (blacklistCheck.isBlacklisted) {
+      score += 40;
+      reasons.push(`Address blacklisted: ${blacklistCheck.sources.join(', ')}`);
+    }
+
+    // 5. Velocity check - количество заявок за 24 часа
     const ordersLast24h = user.orders.length;
     if (ordersLast24h > this.THRESHOLDS.ORDERS_PER_DAY) {
       score += 30;
       reasons.push(`Слишком много заявок за 24 часа: ${ordersLast24h}`);
     }
 
-    // 4. Проверка суммы
+    // 6. Проверка суммы
     if (amount > this.THRESHOLDS.MAX_AMOUNT) {
       score += 25;
       reasons.push(`Подозрительно большая сумма: ${amount}`);
